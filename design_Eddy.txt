@@ -1,12 +1,12 @@
-Etapes du jeu PokemOz:
+﻿Etapes du jeu PokemOz:
 
 1.Choisir la map.
 
   Le fichier map doit être un fichier ".txt". On peut stocker toutes nos maps dans un dossier map.
-  L'utilisateur pourra sélectionner une map parmis tant d'autre grâce à une interface graphique. 
+  L'utilisateur pourra sélectionner une map parmis tant d'autre grâce à une interface graphique. -> record comme dans le fichier
   La liste peut être représentée par une listbox 
   (http://mozart.github.io/mozart-v1/doc-1.4.0/mozart-stdlib/wp/qtk/html/node15.html#chapter.widgets.listbox). 
-  
+
 2.Choisir PokemOz starter.
 
   L'utilisateur a le choix entre 3 PokemOz starter (Bulbasoz, Oztirtle, Charmandoz).
@@ -18,7 +18,9 @@ Etapes du jeu PokemOz:
   La map étant déjà choisie, il s'agit de juste l'afficher. Pour ce faire, on peut utiliser un canva 
   (http://mozart.github.io/mozart-v1/doc-1.4.0/mozart-stdlib/wp/qtk/html/node9.html#chapter.widgets.canvas).
   Chaque champ de la map (tuple) sera représenté par un rectangle dont la couleur changera selon la valeur du champ.
-  
+
+  --> Encodage des types de case?
+
 4.Afficher les trainer.
 
   Le trainer représentant l'utilisateur commence d'office au point en haut à droite.
@@ -34,6 +36,8 @@ Etapes du jeu PokemOz:
   Mais comment garder trace des positions de chaque trainer ?
   Une façon de faire, que je propose, serait de créer une liste de port, où chaque port correspondrait à un trainer. 
   Ainsi donc, chaque trainer avant de bouger vérifie premièrement si il n'y a pas de trainer sur la case vers laquelle il veut bouger.
+  --> Si deux trainers se déplacent en même temps sur la même case
+  --> Q ports
   Deuxièmement, et cela ne s'applique que pour le trainer-utilisateur, on check s'il n'y a pas de trainer adverse sur une case à côté.
   
   Il faut aussi vérifier si l'utilisateur n'est pas sur de l'herbe. Auquel cas, il y a des chances qu'un PokemOz wild s'y trouve.
@@ -51,7 +55,7 @@ Etapes du jeu PokemOz:
   
   L'idée de liste de ports a toute son utilité. Grâce à ceci on peut facilement faire communiquer les 2 trainers.
   Trainer 1 envoie un message d'attaque (contenant le PokemOz qui attaque) au trainer 2 qui retire les points de vie à son PokemOz.
-  
+  --> OK  
   Il faudra veiller à la fin de chaque combat d'augmenter les points d'expérience.
   
   Il faut aussi mettre en pause tout les trainers durant une fight (pas de déplacement possible dans la map).
@@ -63,5 +67,19 @@ Etapes du jeu PokemOz:
 
 Structure utilisé:
 pokemoz(t:type n:name hp:(r:remaining m:max) lx:level xp:experience)
-trainer(c:column r:row p1:pokemoz p2:pokemoz p3:pokemoz)
+trainer(c:column r:row isDefeated:b p1:pokemoz p2:pokemoz p3:pokemoz)
 trainers(player:port_trainer ia1:port_trainer ...)
+map (r(1 1 1 0 0 0 0) r(1 1 1 0 0 1 1) r(1 1 1 0 0 1 1) r(0 0 0 0 0 1 1) r(0 0 0 1 1 1 1) r(0 0 0 1 1 0 0) r(0 0 0 0 0 0 0))
+
+--> 1) Map + Canvas
+--> 2) Deplacement (A chaque fois que je passe dans une case verte, lancer le calcul de probabilité
+pour lancer le combat) ou si a côté du trainer.
+--> 3) Combat (si plusieurs tous gagnent la même XP)
+
+A faire pour dimanche 19/04:
+
+Solaiman: Gérer les canvas, représentation de la map et déplacements ci-dessus
+Eddy: Design de l'app + structures de données utilisées
+
+
+--> 
