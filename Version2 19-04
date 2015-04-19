@@ -1,0 +1,53 @@
+declare [QTk]={Module.link ["x-oz://system/wp/QTk.ozf"]}
+
+local
+   Canvas
+   W=700
+   H=700
+   NbLines=7 % A recuperer depuis le fichier txt
+   TmpL
+   GenerateColumn
+   Desc=td(canvas(bg:white
+                  width:W
+                  height:H
+                  handle:Canvas))
+   Window={QTk.build Desc}
+   {Window set(geometry:geometry(x:200 y:200))}
+   Dir={NewCell r(~10 0)}
+   Points={NewDictionary}
+   %Assignation des touches
+   {Window bind(event:"<Up>" action:proc{$} {Assign Dir r(~10 0)} end)}
+   {Window bind(event:"<Left>" action:proc{$} {Assign Dir r(0 ~10)} end)}
+   {Window bind(event:"<Down>" action:proc{$} {Assign Dir r(10 0)} end)}
+   {Window bind(event:"<Right>" action:proc{$} {Assign Dir r(0 10)} end)}
+  
+   TmpL=H div NbLines
+   proc{GenerateGrid ActL}
+      if ActL=<0 then skip %%
+      else
+	 {Canvas create(line 0 ActL W ActL)}
+	 {Canvas create(line ActL 0 ActL H)}
+	 %{Canvas create(rect W-TmpL H-TmpL W H fill:blue outline:red)}
+	 {GenerateGrid ActL-TmpL}
+      end
+   end
+   proc{Game X Y DirX DirY} LX LY D in %Utiliser un record avec toutes les infos du jeu par apres?
+      D={Access Dir}
+      %TODO:
+      %-Comment modifier un canvas pour deplacer le carre modif
+      %-Verifier Out Of Bond
+  
+      %LY=Y+(({Access Dir}.1 div 10)*TmpL)
+      %LX=X+(({Access Dir}.2 div 10)*TmpL)
+   
+      {Canvas create(rect X Y W H fill:blue outline:red)}
+      {Delay 1000}
+      {Game X Y 0 0}
+
+   end
+in
+   {Window show}
+   {GenerateGrid H}
+   {Game W-TmpL H-TmpL 0 0}
+
+end
