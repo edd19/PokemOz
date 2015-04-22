@@ -1,87 +1,40 @@
-declare [QTk]={Module.link ["x-oz://system/wp/QTk.ozf"]}
-
-local
-   Canvas
-   W=700
-   H=700
-   NbLines=7 % A recuperer depuis le fichier txt
-   TmpL
-   GenerateColumn
-   Desc=td(canvas(bg:white
-                  width:W
-                  height:H
-                  handle:Canvas))
-   Window={QTk.build Desc}
-   {Window set(geometry:geometry(x:200 y:200))}
-   Dir={NewCell r(~10 0)}
-   Points={NewDictionary}
-   %Assignation des touches
-   {Window bind(event:"<Up>" action:proc{$} {Assign Dir r(~10 0)} end)}
-   {Window bind(event:"<Left>" action:proc{$} {Assign Dir r(0 ~10)} end)}
-   {Window bind(event:"<Down>" action:proc{$} {Assign Dir r(10 0)} end)}
-   {Window bind(event:"<Right>" action:proc{$} {Assign Dir r(0 10)} end)}
-  
-   TmpL=H div NbLines
-   proc{GenerateGrid ActL}
-      if ActL=<0 then skip %%
-      else
-	 {Canvas create(line 0 ActL W ActL)}
-	 {Canvas create(line ActL 0 ActL H)}
-	 %{Canvas create(rect W-TmpL H-TmpL W H fill:blue outline:red)}
-	 {GenerateGrid ActL-TmpL}
-      end
-   end
-   proc{Game X Y DirX DirY} LX LY D in %Utiliser un record avec toutes les infos du jeu par apres?
-      D={Access Dir}
-      %TODO:
-      %-Comment modifier un canvas pour deplacer le carre modif
-      %-Verifier Out Of Bond
-  
-      %LY=Y+(({Access Dir}.1 div 10)*TmpL)
-      %LX=X+(({Access Dir}.2 div 10)*TmpL)
-   
-      {Canvas create(rect X Y W H fill:blue outline:red)}
-      {Delay 1000}
-      {Game X Y 0 0}
-
-   end
-in
-   {Window show}
-   {GenerateGrid H}
-   {Game W-TmpL H-TmpL 0 0}
-
-end
-
-declare
-[Prototyper] = {Module.link ["x-oz://system/wp/Prototyper.ozf"]}
-{Prototyper.run}
-
 %% Partie Eddy
 declare [QTk]={Module.link ["x-oz://system/wp/QTk.ozf"]}
 
-local 
-  Canvas
-  W=700	%width of the map
-  H=700	%height of the map
-  NbLines = 7 % number of rows and columns
-  Desc = td(canvas(bg:white	%create a canvas representing the map
-		    width:W
-		    height:H
-		    handle:Canvas))
-  Window={QTk.build Desc}
-  
-  proc{CreateRectangle X Y}	%procedure that creates a rectangle and moves it
-    Tag={Canvas newTag($)}
-    {Canvas create(rect X Y X+100 Y+100 fill:blue tags:Tag)}
-  in
-      {Window bind(event:"<Up>" action:proc{$} {Tag delete} {CreateRectangle X Y-100} end)}	%move the rectangle by deleting the current one
-      {Window bind(event:"<Down>" action:proc{$} {Tag delete} {CreateRectangle X Y+100} end)}	% and creating a new one in the direction indicated
-      {Window bind(event:"<Left>" action:proc{$} {Tag delete} {CreateRectangle X-100 Y} end)}
-      {Window bind(event:"<Right>" action:proc{$} {Tag delete} {CreateRectangle X+100 Y} end)}
+   local 
+      Canvas
+      W=700	%width of the map
+      H=700	%height of the map
+      NbLines = 7 % number of rows and columns
+      TmpL %height (and width) of a box
+      Desc = td(canvas(bg:white	%create a canvas representing the map
+		       width:W
+		       height:H
+		       handle:Canvas))
+      Window={QTk.build Desc}
+      TmpL=H div NbLines
+      proc{GenerateGrid ActL}
+	 if ActL=<0 then skip %%
+	 else
+	    {Canvas create(line 0 ActL W ActL)}
+	    {Canvas create(line ActL 0 ActL H)}
+	 %{Canvas create(rect W-TmpL H-TmpL W H fill:blue outline:red)}
+	    {GenerateGrid ActL-TmpL}
+	 end
+      end
+      proc{CreateRectangle X Y}	%procedure that creates a rectangle and moves it
+	 %Sera plutot la methode de jeu non?
+	 Tag={Canvas newTag($)}
+	 {Canvas create(rect X Y X+100 Y+100 fill:blue tags:Tag)}
+      in
+	 {Window bind(event:"<Up>" action:proc{$} {Tag delete} {CreateRectangle X {Max 0 Y-TmpL}} end)}	%move the rectangle by deleting the current one
+	 {Window bind(event:"<Down>" action:proc{$} {Tag delete} {CreateRectangle X {Min H-TmpL Y+TmpL}} end)}	% and creating a new one in the direction indicated
+	 {Window bind(event:"<Left>" action:proc{$} {Tag delete} {CreateRectangle {Max 0 X-TmpL} Y} end)}
+	 {Window bind(event:"<Right>" action:proc{$} {Tag delete} {CreateRectangle {Min H-TmpL X+TmpL} Y} end)}
    end
-   
-in
-  {Window show} %show the map
-  {CreateRectangle 0 0}
+      
+   in
+      {Window show} %show the map
+      {GenerateGrid H}
+      {CreateRectangle 0 0}
 end
-  
