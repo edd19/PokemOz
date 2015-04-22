@@ -51,3 +51,37 @@ in
    {Game W-TmpL H-TmpL 0 0}
 
 end
+
+declare
+[Prototyper] = {Module.link ["x-oz://system/wp/Prototyper.ozf"]}
+{Prototyper.run}
+
+%% Partie Eddy
+declare [QTk]={Module.link ["x-oz://system/wp/QTk.ozf"]}
+
+local 
+  Canvas
+  W=700	%width of the map
+  H=700	%height of the map
+  NbLines = 7 % number of rows and columns
+  Desc = td(canvas(bg:white	%create a canvas representing the map
+		    width:W
+		    height:H
+		    handle:Canvas))
+  Window={QTk.build Desc}
+  
+  proc{CreateRectangle X Y}	%procedure that creates a rectangle and moves it
+    Tag={Canvas newTag($)}
+    {Canvas create(rect X Y X+100 Y+100 fill:blue tags:Tag)}
+  in
+      {Window bind(event:"<Up>" action:proc{$} {Tag delete} {CreateRectangle X Y-100} end)}	%move the rectangle by deleting the current one
+      {Window bind(event:"<Down>" action:proc{$} {Tag delete} {CreateRectangle X Y+100} end)}	% and creating a new one in the direction indicated
+      {Window bind(event:"<Left>" action:proc{$} {Tag delete} {CreateRectangle X-100 Y} end)}
+      {Window bind(event:"<Right>" action:proc{$} {Tag delete} {CreateRectangle X+100 Y} end)}
+   end
+   
+in
+  {Window show} %show the map
+  {CreateRectangle 0 0}
+end
+  
