@@ -16,10 +16,10 @@ define
    Height = 600 %Height of the window
    
    proc{CreateWindow} %Creates a window (white by default)
-      Desc = td(width:Width
+      Desc = td(canvas(width:Width
 		height:Height
 		bg:white
-		handle:Canvas)
+		handle:Canvas))
    in
       Window = {QTk.build Desc}
    end
@@ -30,8 +30,7 @@ define
 
    %Add methods
    proc{AddRadioButton X Y Desc} %Add a radio button on the window
-      %Add the radio button on the window with the top left edge of the
-      %radio button situated at point (X,Y)
+      %Add the radio button on the window with the top-center situated at point (X,Y)
       %Desc is the radio button description
       {Canvas create(window X Y window:Desc anchor:n)}
    end

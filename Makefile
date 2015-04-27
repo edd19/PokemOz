@@ -6,6 +6,7 @@ CFLAGS=-c
 all:
 	$(CC) $(CFLAGS) agent.oz
 	$(CC) $(CFLAGS) window.oz
-	
+	$(CC) $(CFLAGS) list_pokemoz.oz
+	$(CC) $(CFLAGS) select_starter.oz
 clean:
 	rm *.ozf
