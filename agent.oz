@@ -1,5 +1,6 @@
-declare
-functor Agent
+%Creates a new trainer agent and a new pokemoz agent.
+
+functor
 export
    NewTrainer
    NewPokemOz
