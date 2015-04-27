@@ -18,11 +18,15 @@ define
 		  radiobutton(text:Starter.3.name
 			      group:radio1)
 		 )
+   ButtonOk=button(text:'Ok') %Button ok to pushed on when having decided the starter
+   StringChoose='Choose a PokemOz' 
 
    proc{SelectionScreen} %Display the screen for selecting a pokemoz starter
       {Window.createWindow}
       {Window.showWindow}
-      {Window.addRadioButton ({Window.getWidth} div 2) 0 RadioButton}
+      {Window.addText ({Window.getWidth} div 2) 0 StringChoose} 
+      {Window.addRadioButton ({Window.getWidth} div 2) ({Window.getHeight} div 3) RadioButton}
+      {Window.addButton ({Window.getWidth} div 2) ({Window.getHeight} div 2) ButtonOk} 
    end
    
 end
