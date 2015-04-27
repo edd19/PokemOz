@@ -6,6 +6,7 @@ import
 export
    CreateWindow
    ShowWindow
+   AddRadioButton
    GetWidth
    GetHeight
 define
@@ -19,6 +20,7 @@ define
 		height:Height
 		bg:white
 		handle:Canvas)
+   in
       Window = {QTk.build Desc}
    end
 
@@ -27,7 +29,7 @@ define
    end
 
    %Add methods
-   proc{AddRadioButtonN X Y Desc} %Add a radio button on the window
+   proc{AddRadioButton X Y Desc} %Add a radio button on the window
       %Add the radio button on the window with the top left edge of the
       %radio button situated at point (X,Y)
       %Desc is the radio button description
@@ -43,7 +45,8 @@ define
       Height
    end
    
-   
+end
+
    
    
       
