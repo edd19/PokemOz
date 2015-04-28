@@ -19,9 +19,9 @@ define
    ListTrainers=listtrainers(player:Player 1:Ia1 2:Ia2 3:Ia3 4:Ia4 5:Ia5 6:Ia6 7:Ia7 8:Ia8 9:Ia9 10:Ia10)
 
    fun{CaseAttack Pa Pd} %attack routine when a pokemoz (Pa) attack another one (Pd), return the new state of the defender pokemoz (Pd)
-      if {ListPokemOz.attackSuccess Pa.lx Pd.lx}==true  %of attack succeed
+      if {ListPokemOz.attackSuccess Pa.lx Pd.lx} == true  %of attack succeed
       then local Damage in Damage={ListPokemOz.attackDamage Pa.t Pd.t} %we compute the damage received based on the attacker and defender's type
-	      pokemoz(t:Pd.t n:Pd.n hp:health(r:((Pd.r)-Damage) m:Pd.m) lx:Pd.lx xp:Pd.xp)
+	      pokemoz(t:Pd.t n:Pd.n hp:health(r:((Pd.hp.r)-Damage) m:Pd.hp.m) lx:Pd.lx xp:Pd.xp)
 	   end
 	 
       else Pd
@@ -35,7 +35,7 @@ define
 			   PokemOz=pokemoz(t:P.type n:P.name hp:health(r:20 m:20) lx:5 xp:0)
 			   trainer(c:State.c r:State.r isDefeated:State.isDefeated p1:PokemOz p2:State.p2 p3:State.p3)  
 			end
-	 []attack(P) then {CaseAttack P State.p1}
+      []attack(P) then trainer(c:State.c r:State.r isDefeated:State.isDefeated p1:{CaseAttack P State.p1} p2:State.p2 p3:State.p3)
       else State
       end
    end
@@ -76,15 +76,9 @@ define
       Player
    end
 
-   fun{NewIA R} %Creates a new IA and adds it to the list of IA, R is the record representing the new Trainer
-      fun {Loop R N}
-	 if ListTrainers.N == unit then {Loop R N+1} 	 
-	 elseif N == 10 then ~1 
-	 else {NewTrainer R}
-	 end
-      end
-   in
-      {Loop R 0}
+   fun{NewIA R Id} %Creates a new IA and adds it to the list of IA, R is the record representing the new Trainer and Id is the number of the trainer
+      ListTrainers.Id={NewTrainer R}
+      ListTrainers.Id
    end
       
 

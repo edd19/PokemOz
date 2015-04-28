@@ -8,5 +8,6 @@ all:
 	$(CC) $(CFLAGS) window.oz
 	$(CC) $(CFLAGS) list_pokemoz.oz
 	$(CC) $(CFLAGS) select_starter.oz
+	$(CC) $(CFLAGS) combat.oz
 clean:
 	rm *.ozf

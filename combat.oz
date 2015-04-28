@@ -71,12 +71,14 @@ define
       end
    end
    proc{DisplayCombat Player Opponent} %Display the combat between two trainers or one trainer and a wild pokemoz
-      {DsiplaySelectionAction}
+      {DisplaySelectionAction Player Opponent}
    end
    
    fun{CombatVSTrainer Player Opponent} %combat between 2 trainers where player is the current player and opponent is an IA trainer
       {Window.createWindow}
       {Window.showWindow}
+      {DisplayCombat Player Opponent}
+      true
    end
    
    
