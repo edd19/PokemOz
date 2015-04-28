@@ -8,6 +8,8 @@ export
    ListPokemOz
    ListStarter
    CreatePokemOz
+   AttackSuccess
+   AttackDamage
 
 define
    Number = 3 %Total number of PokemOz
@@ -62,5 +64,29 @@ define
 	 Health = {GetMaxHealth LvlP}
 	 pokemoz(t:Pokemoz.type n:Pokemoz.name hp:health(r:Health m:Health) lx:LvlP xp:0)
       end
+   end
+
+   fun{AttackSuccess La Ld}%return true if an attack succeed and false otherwise, La is the level of the attacker and Ld of the defender
+      local Probability N in
+	 Probability = (((6+La-Ld)*9)*100) mod 100 %probability for an attack to succed based on the difference of level of the two pokemoz
+	 N = {OS.rand} mod 100 %N is a number between 0 and 99
+	 if N < Probability then true
+	 else false
+	 end
+      end
+   end
+
+   fun{AttackDamage Ta Td} %return the damage caused by a pokemoz of type Ta to a pokemoz of type Td
+      if Ta == Td then 2 %same type
+      elseif Ta=="grass" then if Td=="fire" then 1
+			      elseif Td=="water" then 3
+			      else 0 end
+      elseif Ta=="fire" then if Td=="grass" then 3
+			     elseif Td=="water" then 1
+			     else 0 end
+      elseif Ta=="water" then if Td=="grass" then 1
+			      elseif Td=="fire" then 3
+			      else 0 end
+      else 0 end
    end
 end

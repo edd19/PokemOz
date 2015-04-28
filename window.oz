@@ -9,6 +9,7 @@ export
    AddText
    AddButton
    AddRadioButton
+   AddGrid
    GetWidth
    GetHeight
 define
@@ -47,6 +48,12 @@ define
       %Add the radio button on the window with the top-center situated at point (X,Y)
       %Desc is the radio button description
       {Canvas create(window X Y window:Desc anchor:n)}
+   end
+
+   proc{AddGrid X Y Desc} %Add a grid on the window
+      %Add the grid so that the center of it is placed at point (X,Y)
+      %Desc is the grid description
+      {Canvas create(window X Y window:Desc)}
    end
       
    %Get methods

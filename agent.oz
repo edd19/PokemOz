@@ -3,6 +3,9 @@
 %A pokemoz is of the form pokemoz(t:type n:name hp:health(r:remaining m:max) lx:level xp:experience)
 
 functor
+
+import
+   ListPokemOz at 'list_pokemoz.ozf'
 export
    NewPlayer
    NewIA
@@ -14,6 +17,17 @@ define
    Player
    Ia1 Ia2 Ia3 Ia4 Ia5 Ia6 Ia7 Ia8 Ia9 Ia10 %Maximum of 10 trainers (IA) by map 
    ListTrainers=listtrainers(player:Player 1:Ia1 2:Ia2 3:Ia3 4:Ia4 5:Ia5 6:Ia6 7:Ia7 8:Ia8 9:Ia9 10:Ia10)
+
+   fun{CaseAttack Pa Pd} %attack routine when a pokemoz (Pa) attack another one (Pd), return the new state of the defender pokemoz (Pd)
+      if {ListPokemOz.attackSuccess Pa.lx Pd.lx}==true  %of attack succeed
+      then local Damage in Damage={ListPokemOz.attackDamage Pa.t Pd.t} %we compute the damage received based on the attacker and defender's type
+	      pokemoz(t:Pd.t n:Pd.n hp:health(r:((Pd.r)-Damage) m:Pd.m) lx:Pd.lx xp:Pd.xp)
+	   end
+	 
+      else Pd
+      end
+   end
+   
    fun{TrainerEvent Msg State} %trainer event caused by message received
       case Msg
       of get(T) then T=State State %to get the trainer record
@@ -21,6 +35,8 @@ define
 			   PokemOz=pokemoz(t:P.type n:P.name hp:health(r:20 m:20) lx:5 xp:0)
 			   trainer(c:State.c r:State.r isDefeated:State.isDefeated p1:PokemOz p2:State.p2 p3:State.p3)  
 			end
+	 []attack(P) then {CaseAttack P State.p1}
+      else State
       end
    end
 
