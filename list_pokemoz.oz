@@ -39,7 +39,7 @@ define
 	 else  Rlvl=(Lvl + 3 -(MinusOrPlus*6))
 	 end
 	 
-	 if Rlvl < 5 then 5
+	 if Rlvl < 5 then 5 %verify that the lvl is not inferior than 5
 	 else Rlvl
 	 end
 	 
@@ -56,8 +56,11 @@ define
    end
 
    fun{CreatePokemOz Lvl} %Create a new pokemoz, Lvl is the max Lvl of the PokemOz of the player
-      local Pokemoz in
+      local Pokemoz LvlP Health in
 	 Pokemoz={RandomPokemOz}
+	 LvlP = {RandomLvl Lvl}
+	 Health = {GetMaxHealth LvlP}
+	 pokemoz(t:Pokemoz.type n:Pokemoz.name hp:health(r:Health m:Health) lx:LvlP xp:0)
       end
    end
 end
