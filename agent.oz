@@ -12,7 +12,8 @@ export
 
 define
    Player
-   ListTrainers=listtrainers(player:Player)
+   Ia1 Ia2 Ia3 Ia4 Ia5 Ia6 Ia7 Ia8 Ia9 Ia10 %Maximum of 10 trainers (IA) by map 
+   ListTrainers=listtrainers(player:Player 1:Ia1 2:Ia2 3:Ia3 4:Ia4 5:Ia5 6:Ia6 7:Ia7 8:Ia8 9:Ia9 10:Ia10)
    fun{TrainerEvent Msg State} %trainer event caused by message received
       case Msg
       of get(T) then T=State State %to get the trainer record
@@ -59,10 +60,17 @@ define
       Player
    end
 
-   fun{NewIA R} %Creates a new IA and adds it to the list of IA
-      {NewTrainer R}
-      %TODO add to list of IA
+   fun{NewIA R} %Creates a new IA and adds it to the list of IA, R is the record representing the new Trainer
+      fun {Loop R N}
+	 if ListTrainers.N == unit then {Loop R N+1} 	 
+	 elseif N == 10 then ~1 
+	 else {NewTrainer R}
+	 end
+      end
+   in
+      {Loop R 0}
    end
+      
 
    %Get methods
    fun{GetPlayer}

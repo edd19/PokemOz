@@ -9,6 +9,7 @@ import
 export
    SelectionScreen
    Player
+   Agent
 define
    Player={Agent.newPlayer} %Creates a new player for the game, Player is a Port
    
