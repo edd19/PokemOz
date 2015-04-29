@@ -48,28 +48,49 @@
 %    {DisplayFrames W H Canvas}
 % end
 
-
 functor
    
 import
+   OS
    Window at 'window.ozf'
 export
    CombatVSTrainer
-define
+define 
 
+   proc{IAReactionAttack Player Opponent} %IA reaction when being attacked
+      local X in
+	 {Send Opponent get(X)} 
+	 {Send Player attack(X.p1)}
+      end
+   end
 
-   proc{DisplaySelectionAction Player Opponent} %Dsiplay the menu selection to choose an action between attack, switch pokemoz or flee
-      local Select Grid ActionAttack ActionChange ActionFlee in
-	 ActionAttack = proc{$} local X in {Send Player get(X)} %get trainer record
-				   {Send Opponent attack(X.p1)} end end %send an attack message to the opponent
+   proc{ActionAttack Player Opponent} %when the player attack the opponent pokemoz
+      local X  Coin in
+	 Coin={OS.rand} mod 2 %generate 0 or 1
+	 if Coin==0 then %the player attacks first
+	    {Send Player get(X)} %get trainer record
+	    {Send Opponent attack(X.p1)} %send an attack message
+	    {IAReactionAttack Player Opponent}
+	    
+	 else %the opponent attacks first 
+	    {IAReactionAttack Player Opponent}
+	    {Send Player get(X)} 
+	    {Send Opponent attack(X.p1)}
+	 end
+      end
+   end
+   
+   proc{DisplaySelectionAction Player Opponent} %Display the menu selection to choose an action between attack, switch pokemoz or flee
+      local Select Grid in
 	 
-	 Select=grid(button(text:"Attack" action:ActionAttack) button(text:"Change")  newline %Grid for selecting an action to do when in battle (attack, switch pokemoz or flee)
+	 Select=grid(button(text:"Attack" action:proc{$} {ActionAttack Player Opponent} end) button(text:"Change")  newline %Grid for selecting an action to do when in battle (attack, switch pokemoz or flee)
 		     button(text:"Flee") empty  newline
 		     handle:Grid)
 	 {Window.addGrid ({Window.getWidth} div 6)*5 ({Window.getHeight} div 6)*5 Select}
 	 
       end
    end
+   
    proc{DisplayCombat Player Opponent} %Display the combat between two trainers or one trainer and a wild pokemoz
       {DisplaySelectionAction Player Opponent}
    end
