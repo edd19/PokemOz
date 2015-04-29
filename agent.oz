@@ -55,7 +55,7 @@ define
    end
 
    fun{LevelManagement Pokemoz} %Check if the pokemoz levels up with it's current xp
-      local Lvl Exp in
+      local Lvl Exp Remaining Maximum  in
 	 Exp = Pokemoz.xp
 	 if Exp > 49 then Lvl = 10
 	 elseif Exp > 29 then Lvl = 9
@@ -64,7 +64,13 @@ define
 	 elseif Exp > 4 then Lvl = 6
 	 else Lvl = 5
 	 end
-	 pokemoz(t:Pokemoz.t n:Pokemoz.n hp:Pokemoz.hp lx:Lvl xp:Pokemoz.xp)
+
+	 Maximum = {ListPokemOz.getMaxHealth Lvl}%set a new maximum health if leveled up
+	 
+	 if Lvl == Pokemoz.lx then Remaining = Pokemoz.hp.r %if the pokemoz leveled up then his health is restore to it's maximum
+	 else Remaining = Maximum
+	 end
+	 pokemoz(t:Pokemoz.t n:Pokemoz.n hp:health(r:Remaining m:Maximum) lx:Lvl xp:Pokemoz.xp)
       end
    end
    

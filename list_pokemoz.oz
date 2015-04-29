@@ -7,6 +7,7 @@ import
 export
    ListPokemOz
    ListStarter
+   GetMaxHealth
    CreatePokemOz
    AttackSuccess
    AttackDamage
