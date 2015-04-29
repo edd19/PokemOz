@@ -10,6 +10,15 @@ define
    Player  %Player port
    Opponent  %Opponent port
 
+   proc{AddExp} %add exp to the winning pokemoz
+      local X in
+	 if {IsKo Opponent} then {Send Opponent get(X)} {Send Player exp(X.p1.lx)}
+	 elseif {IsKo Player} then {Send Player get(X)} {Send Opponent exp(X.p1.lx)}
+	 else skip
+	 end
+      end
+   end      
+   
    proc{CombatFinished} %check if the combat is finished
       local X Y in
 	 {Send Player defeated(X)} %check if the Player is defeated
@@ -50,6 +59,8 @@ define
 	    {IAReactionAttack}
 	    if {IsKo Player} == false then {Attack Player Opponent} end
 	 end
+
+	 {AddExp} %add experience to the winnig pokemoz if one
 
 	 {CombatFinished} %ends the combat if one the trainers is defeated
       end

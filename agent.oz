@@ -53,6 +53,20 @@ define
 	 R
       end
    end
+
+   fun{LevelManagement Pokemoz} %Check if the pokemoz levels up with it's current xp
+      local Lvl Exp in
+	 Exp = Pokemoz.xp
+	 if Exp > 49 then Lvl = 10
+	 elseif Exp > 29 then Lvl = 9
+	 elseif Exp > 19 then Lvl = 8
+	 elseif Exp > 11 then Lvl = 7
+	 elseif Exp > 4 then Lvl = 6
+	 else Lvl = 5
+	 end
+	 pokemoz(t:Pokemoz.t n:Pokemoz.n hp:Pokemoz.hp lx:Lvl xp:Pokemoz.xp)
+      end
+   end
    
    fun{TrainerEvent Msg State} %trainer event caused by message received
       case Msg
@@ -62,11 +76,16 @@ define
 			   trainer(c:State.c r:State.r isDefeated:State.isDefeated p1:PokemOz p2:State.p2 p3:State.p3)  
 			end
 	 
-      []attack(P) then {IsDefeated trainer(c:State.c r:State.r isDefeated:State.isDefeated p1:{CaseAttack P State.p1} p2:State.p2 p3:State.p3)}
+      []attack(P) then {IsDefeated trainer(c:State.c r:State.r isDefeated:State.isDefeated p1:{CaseAttack P State.p1} p2:State.p2 p3:State.p3)} %when receiving an attack
 	 
       []ko(B) then B={IsKo State.p1} State %to check if the pokemoz fighting is ko
 
-      []defeated(B) then B=State.isDefeated State
+      []defeated(B) then B=State.isDefeated State %to check if the trainer is defeated
+
+      []exp(E) then local PokemOz in    %to increase your pokemoz experience
+		       PokemOz = {LevelManagement pokemoz(t:State.p1.t n:State.p1.n hp:State.p1.hp lx:State.p1.lx xp:((State.p1.xp)+E))}
+		       trainer(c:State.c r:State.r isDefeated:State.isDefeated p1:PokemOz p2:State.p2 p3:State.p3)
+		    end
 	 
       else State
       end

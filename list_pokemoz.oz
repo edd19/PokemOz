@@ -57,12 +57,23 @@ define
       end
    end
 
+   fun{ExpByLvl Lvl}%return the experience corresponding to a lvl
+      if Lvl < 6 then 0
+      elseif Lvl == 6 then 5
+      elseif Lvl == 7 then 12
+      elseif Lvl == 8 then 20
+      elseif Lvl == 9 then 30
+      elseif Lvl == 10 then 50
+      else 50
+      end
+   end
+   
    fun{CreatePokemOz Lvl} %Create a new pokemoz, Lvl is the max Lvl of the PokemOz of the player
       local Pokemoz LvlP Health in
 	 Pokemoz={RandomPokemOz}
 	 LvlP = {RandomLvl Lvl}
 	 Health = {GetMaxHealth LvlP}
-	 pokemoz(t:Pokemoz.type n:Pokemoz.name hp:health(r:Health m:Health) lx:LvlP xp:0)
+	 pokemoz(t:Pokemoz.type n:Pokemoz.name hp:health(r:Health m:Health) lx:LvlP xp:{ExpByLvl LvlP})
       end
    end
 
