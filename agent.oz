@@ -20,11 +20,37 @@ define
 
    fun{CaseAttack Pa Pd} %attack routine when a pokemoz (Pa) attack another one (Pd), return the new state of the defender pokemoz (Pd)
       if {ListPokemOz.attackSuccess Pa.lx Pd.lx} == true  %of attack succeed
-      then local Damage in Damage={ListPokemOz.attackDamage Pa.t Pd.t} %we compute the damage received based on the attacker and defender's type
-	      pokemoz(t:Pd.t n:Pd.n hp:health(r:((Pd.hp.r)-Damage) m:Pd.hp.m) lx:Pd.lx xp:Pd.xp)
+      then local Damage Remaining in Damage={ListPokemOz.attackDamage Pa.t Pd.t} %we compute the damage received based on the attacker and defender's type
+	      if Pd.hp.r > Damage then Remaining = ((Pd.hp.r)-Damage) %so that the hp are never inferior than 0
+	      else Remaining = 0
+	      end
+	      pokemoz(t:Pd.t n:Pd.n hp:health(r:Remaining m:Pd.hp.m) lx:Pd.lx xp:Pd.xp)
 	   end
 	 
       else Pd
+      end
+   end
+
+   fun{IsKo Pokemoz} %check if the pokemoz is ko
+      if Pokemoz == nil then true
+      else if Pokemoz.hp.r == 0 then true
+	   else false end
+      end
+   end
+   
+   fun{IsDefeated Trainer}%check if the trainer is defeated and update the trainer record in need
+      local R in
+	 if {IsKo Trainer.p1} == true then
+	    if {IsKo Trainer.p2}==true then
+	       if {IsKo Trainer.p3} == true then
+		 R= trainer(c:Trainer.c r:Trainer.r isDefeated:true p1:Trainer.p1 p2:Trainer.p2 p3:Trainer.p3) %set the vaule isDefeated to true
+	       else R= Trainer
+	       end
+	    else R=Trainer
+	    end
+	 else R= Trainer
+	 end
+	 R
       end
    end
    
@@ -35,7 +61,13 @@ define
 			   PokemOz=pokemoz(t:P.type n:P.name hp:health(r:20 m:20) lx:5 xp:0)
 			   trainer(c:State.c r:State.r isDefeated:State.isDefeated p1:PokemOz p2:State.p2 p3:State.p3)  
 			end
-      []attack(P) then trainer(c:State.c r:State.r isDefeated:State.isDefeated p1:{CaseAttack P State.p1} p2:State.p2 p3:State.p3)
+	 
+      []attack(P) then {IsDefeated trainer(c:State.c r:State.r isDefeated:State.isDefeated p1:{CaseAttack P State.p1} p2:State.p2 p3:State.p3)}
+	 
+      []ko(B) then B={IsKo State.p1} State %to check if the pokemoz fighting is ko
+
+      []defeated(B) then B=State.isDefeated State
+	 
       else State
       end
    end

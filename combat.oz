@@ -1,53 +1,3 @@
-% declare [QTk]={Module.link ["x-oz://system/wp/QTk.ozf"]}
-
-% local
-%    Canvas
-%    Grid
-%    W=600	%width of the screen
-%    H=600	%height of the screen
-%    Desc = td(canvas(bg:white	%description of the canvas representing the screen
-% 		    width:W
-% 		    height:H
-% 		    handle:Canvas))
- 
-%    Window={QTk.build Desc}
-   
-%    proc {DisplaySelectAction X Y Canvas} %Show the select action menu.
-%       local Select Width Height
-%       in
-% 	 Width=14 %Number of characters
-% 	 Height=2 %Nulber of line
-% 	 Select=grid(button(text:"Attack" height:Height width:Width) button(text:"Change" height:Height width:Width)  newline
-% 		     button(text:"Flee" height:Height width:Width) empty  newline
-% 		     handle:Grid)
-% 	 {Canvas create(window X Y window:Select anchor:nw)}
-%       end
-      
-%    end
-
-%    proc {DisplayBattleMessage X Y Canvas} %Display the message of the combat
-%       local Message Width Height
-%       in
-% 	 Width=43 %Nulber of characters per line
-% 	 Height=5 %Number of line
-% 	 Message=label(init:"Choose an action" height:Height width:Width)
-% 	 {Canvas create(window X Y window:Message anchor:nw)}
-%       end
-%    end
-
-%    proc{DisplayFrames X Y Canvas} %Display the frames of the combat screen
-%       {Canvas create(line 0 500 X 500)}
-%       {Canvas create(line 350 500 350 Y)}
-%    end
-   
-   
-% in
-%    {Window show} %show the map
-%    {DisplaySelectAction 351 501 Canvas}
-%    {DisplayBattleMessage 1 501 Canvas}
-%    {DisplayFrames W H Canvas}
-% end
-
 functor
    
 import
@@ -56,50 +6,83 @@ import
 export
    CombatVSTrainer
 define 
+   IsFinished  %0 if the player winned the combat and 1 if he lost, 2 if the player or the wild pokemoz fled
+   Player  %Player port
+   Opponent  %Opponent port
 
-   proc{IAReactionAttack Player Opponent} %IA reaction when being attacked
-      local X in
-	 {Send Opponent get(X)} 
-	 {Send Player attack(X.p1)}
-      end
-   end
-
-   proc{ActionAttack Player Opponent} %when the player attack the opponent pokemoz
-      local X  Coin in
-	 Coin={OS.rand} mod 2 %generate 0 or 1
-	 if Coin==0 then %the player attacks first
-	    {Send Player get(X)} %get trainer record
-	    {Send Opponent attack(X.p1)} %send an attack message
-	    {IAReactionAttack Player Opponent}
-	    
-	 else %the opponent attacks first 
-	    {IAReactionAttack Player Opponent}
-	    {Send Player get(X)} 
-	    {Send Opponent attack(X.p1)}
+   proc{CombatFinished} %check if the combat is finished
+      local X Y in
+	 {Send Player defeated(X)} %check if the Player is defeated
+	 {Send Opponent defeated(Y)}%check if the Opponent is defeated
+	 if X == true then IsFinished=1
+	 elseif Y == true then IsFinished=0
+	 else skip
 	 end
       end
    end
+
+   fun{IsKo Trainer} %Return true if the first pokemoz (the one fighting) of the trainer if KO
+      local KO in
+	 {Send Trainer ko(KO)}
+	 KO
+      end
+   end
+
+   proc{Attack Attacker Defender}%attack by the attacker on the defender
+      local X in
+	 {Send Attacker get(X)} %get attacker record
+	 {Send Defender attack(X.p1)}%send an attack message to the defender
+      end
+   end
    
-   proc{DisplaySelectionAction Player Opponent} %Display the menu selection to choose an action between attack, switch pokemoz or flee
+   proc{IAReactionAttack} %IA reaction when being attacked
+      {Attack Opponent Player}
+   end
+
+   proc{ActionAttack} %when the player attack the opponent pokemoz
+      local X  Coin in
+	 Coin={OS.rand} mod 2 %generate 0 or 1
+	 if Coin==0 then %the player attacks first
+	    {Attack Player Opponent}
+	    if {IsKo Opponent} == false then {IAReactionAttack} end %if the attack received didn't koed the opponent's pokemoz
+	    
+	 else %the opponent attacks first 
+	    {IAReactionAttack}
+	    if {IsKo Player} == false then {Attack Player Opponent} end
+	 end
+
+	 {CombatFinished} %ends the combat if one the trainers is defeated
+      end
+   end
+
+   proc{ActionFlee}
+      IsFinished=2
+   end
+   
+   proc{DisplaySelectionAction} %Display the menu selection to choose an action between attack, switch pokemoz or flee
       local Select Grid in
 	 
-	 Select=grid(button(text:"Attack" action:proc{$} {ActionAttack Player Opponent} end) button(text:"Change")  newline %Grid for selecting an action to do when in battle (attack, switch pokemoz or flee)
-		     button(text:"Flee") empty  newline
+	 Select=grid(button(text:"Attack" action:proc{$} {ActionAttack} end) button(text:"Change")  newline %Grid for selecting an action to do when in battle (attack, switch pokemoz or flee)
+		     button(text:"Flee" action:proc{$} {ActionFlee} end) empty  newline
 		     handle:Grid)
 	 {Window.addGrid ({Window.getWidth} div 6)*5 ({Window.getHeight} div 6)*5 Select}
 	 
       end
    end
    
-   proc{DisplayCombat Player Opponent} %Display the combat between two trainers or one trainer and a wild pokemoz
-      {DisplaySelectionAction Player Opponent}
+   proc{DisplayCombat} %Display the combat between two trainers or one trainer and a wild pokemoz
+      {DisplaySelectionAction}
    end
    
-   fun{CombatVSTrainer Player Opponent} %combat between 2 trainers where player is the current player and opponent is an IA trainer
+   fun{CombatVSTrainer P O} %combat between 2 trainers where P is the current player and O is an IA trainer
+      Player = P
+      Opponent = O
+      
       {Window.createWindow}
       {Window.showWindow}
-      {DisplayCombat Player Opponent}
-      true
+      {DisplayCombat}
+      
+      IsFinished
    end
    
    
