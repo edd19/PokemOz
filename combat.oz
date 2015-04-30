@@ -9,7 +9,18 @@ define
    IsFinished  %0 if the player winned the combat and 1 if he lost, 2 if the player or the wild pokemoz fled
    Player  %Player port
    Opponent  %Opponent port
+   TextHandle  %To change the text on screen
 
+   %Texts to be displayed when in combat
+   proc{IntroductionText}
+      local Text in
+	 Text = "A trainer challenged you"
+	 TextHandle={Window.addMessage ({Window.getWidth} div 6)*2 ({Window.getHeight} div 6)*5 Text}
+      end
+   end
+
+   
+   
    proc{AddExp} %add exp to the winning pokemoz
       local X in
 	 if {IsKo Opponent} then {Send Opponent get(X)} {Send Player exp(X.p1.lx)}
@@ -82,6 +93,8 @@ define
    end
    
    proc{DisplayCombat} %Display the combat between two trainers or one trainer and a wild pokemoz
+      {IntroductionText}
+      {Delay 500} 
       {DisplaySelectionAction}
    end
    

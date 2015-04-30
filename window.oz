@@ -10,6 +10,8 @@ export
    AddButton
    AddRadioButton
    AddGrid
+   AddMessage
+   ChangeMessageText
    GetWidth
    GetHeight
 define
@@ -54,6 +56,19 @@ define
       %Add the grid so that the center of it is placed at point (X,Y)
       %Desc is the grid description
       {Canvas create(window X Y window:Desc)}
+   end
+
+   fun{AddMessage X Y Msg}%Add a message on the window and return the handle of the newly created label
+      %Add the message so that the center of it is placed at point (X,Y)
+      %Msg is the text to be written on the screen.
+      local Handle in
+	 {Canvas create(window X Y window:message(init:Msg handle:Handle))}
+	 Handle %return the handle to change the text on screen if needed
+      end
+   end
+
+   proc{ChangeMessageText Handle NewMsg}%Change the label text by the new one (NewMsg)
+      {Handle set(NewMsg)}
    end
       
    %Get methods
