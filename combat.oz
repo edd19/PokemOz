@@ -40,6 +40,13 @@ define
       end
    end
 
+   proc{AttackText}
+      local Text in
+	 Text = "A Pokemoz attack"
+	 {Window.changeMessageText TextHandle Text}
+      end
+   end
+   
    fun{ColorByType Type}%return the color corresponding to a type of Pokemoz
       if Type=="grass" then green
       elseif Type=="fire" then red
@@ -127,6 +134,7 @@ define
       local X in
 	 {Send Attacker get(X)} %get attacker record
 	 {Send Defender attack(X.p1)}%send an attack message to the defender
+	 {AttackText}
       end
    end
    
