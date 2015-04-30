@@ -62,8 +62,18 @@ define
       else OpponentHpPokemozHandle={Window.addMessage ({Window.getWidth} div 6)*4 ({Window.getHeight} div 6)*2 Remaining}
       end
    end
+
+   proc{UpdateDisplayHpPokemoz IsPlayer TrainerPort} %update on the screen the remaining hp of the pokemoz, IsPlayer is there to indicate if it's the player pokemoz
+      local X Remaining in
+	 {Send TrainerPort get(X)}
+	 Remaining = X.p1.hp.r
+	 if IsPlayer == true then {Window.changeMessageText PlayerHpPokemozHandle Remaining}
+	 else {Window.changeMessageText OpponentHpPokemozHandle Remaining}
+	 end
+      end
+   end
    
-   proc{DsiplayPokemOz} %display the pokemoz status on the screen
+   proc{DisplayPokemOz} %display the pokemoz status on the screen
       local X Y PlayerP OpponentP in
 	 {Send Player get(X)}
 	 {Send Opponent get(Y)}
@@ -113,7 +123,7 @@ define
       end
    end
 
-   proc{Attack Attacker Defender}%attack by the attacker on the defender
+   proc{Attack Attacker Defender}%attack by the attacker on the defender, IsPlayer is there to indicate if it's the player pokemoz that attacks
       local X in
 	 {Send Attacker get(X)} %get attacker record
 	 {Send Defender attack(X.p1)}%send an attack message to the defender
@@ -122,18 +132,20 @@ define
    
    proc{IAReactionAttack} %IA reaction when being attacked
       {Attack Opponent Player}
+      {UpdateDisplayHpPokemoz true Player}
    end
 
    proc{ActionAttack} %when the player attack the opponent pokemoz
-      local X  Coin in
+      local Coin in
 	 Coin={OS.rand} mod 2 %generate 0 or 1
 	 if Coin==0 then %the player attacks first
 	    {Attack Player Opponent}
+	    {UpdateDisplayHpPokemoz false Opponent}
 	    if {IsKo Opponent} == false then {IAReactionAttack} end %if the attack received didn't koed the opponent's pokemoz
 	    
 	 else %the opponent attacks first 
 	    {IAReactionAttack}
-	    if {IsKo Player} == false then {Attack Player Opponent} end
+	    if {IsKo Player} == false then {Attack Player Opponent} {UpdateDisplayHpPokemoz false Opponent} end
 	 end
 
 	 {AddExp} %add experience to the winnig pokemoz if one
@@ -161,7 +173,7 @@ define
       {IntroductionText}
       {Delay TimeDelay}
       
-      {DsiplayPokemOz}
+      {DisplayPokemOz}
       
       {ChooseActionText}
       {DisplaySelectionAction}
