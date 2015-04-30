@@ -10,6 +10,7 @@ define
    Player  %Player port
    Opponent  %Opponent port
    TextHandle  %To change the text on screen
+   TimeDelay = 1000
 
    %Texts to be displayed when in combat
    proc{IntroductionText}
@@ -23,6 +24,29 @@ define
       local Text in
 	 Text = "Choose an action"
 	 {Window.changeMessageText TextHandle Text}
+      end
+   end
+
+   proc{LaunchPokemozText PokemozName}
+      local Text in
+	 Text = "Trainer send "
+	 {Window.changeMessageText TextHandle {Append Text PokemozName}}
+      end
+   end
+   
+   proc{DsiplayPokemOz} %display the pokemoz status on the screen
+      local X Y PlayerP OpponentP in
+	 {Send Player get(X)}
+	 {Send Opponent get(Y)}
+	 PlayerP = X.p1
+	 OpponentP = Y.p1
+
+	 {LaunchPokemozText PlayerP.n}
+	 {Delay TimeDelay}
+
+	 {LaunchPokemozText OpponentP.n}
+	 {Delay TimeDelay}
+
       end
    end
    
@@ -99,7 +123,10 @@ define
    
    proc{DisplayCombat} %Display the combat between two trainers or one trainer and a wild pokemoz
       {IntroductionText}
-      {Delay 500}
+      {Delay TimeDelay}
+      
+      {DsiplayPokemOz}
+      
       {ChooseActionText}
       {DisplaySelectionAction}
    end
