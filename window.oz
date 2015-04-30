@@ -11,6 +11,7 @@ export
    AddRadioButton
    AddGrid
    AddMessage
+   AddColoredMessage
    ChangeMessageText
    GetWidth
    GetHeight
@@ -63,6 +64,15 @@ define
       %Msg is the text to be written on the screen.
       local Handle in
 	 {Canvas create(window X Y window:message(init:Msg handle:Handle))}
+	 Handle %return the handle to change the text on screen if needed
+      end
+   end
+
+   fun{AddColoredMessage X Y Msg Color}%Add a message on the window and return the handle of the newly created label
+      %Add the message so that the center of it is placed at point (X,Y)
+      %Msg is the text to be written on the screen.
+      local Handle in
+	 {Canvas create(window X Y window:message(init:Msg bg:Color handle:Handle))}
 	 Handle %return the handle to change the text on screen if needed
       end
    end

@@ -9,7 +9,13 @@ define
    IsFinished  %0 if the player winned the combat and 1 if he lost, 2 if the player or the wild pokemoz fled
    Player  %Player port
    Opponent  %Opponent port
+   
    TextHandle  %To change the text on screen
+   PlayerNamePokemozHandle
+   PlayerHpPokemozHandle
+   OpponentNamePokemozHandle
+   OpponentHpPokemozHandle
+   
    TimeDelay = 1000
 
    %Texts to be displayed when in combat
@@ -33,6 +39,27 @@ define
 	 {Window.changeMessageText TextHandle {Append Text PokemozName}}
       end
    end
+
+   fun{ColorByType Type}%return the color corresponding to a type of Pokemoz
+      if Type=="grass" then green
+      elseif Type=="fire" then red
+      elseif Type=="water" then blue
+      else white
+      end
+   end
+   
+   proc{DisplayNamePokemoz IsPlayer Type Name} %display the name of the pokemoz, isPlayer is there to indicate is it's the player pokemoz
+      local Color in
+	 Color = {ColorByType Type}
+	 if IsPlayer == true then PlayerNamePokemozHandle={Window.addColoredMessage ({Window.getWidth} div 6)*3 ({Window.getHeight} div 6)*4  Name Color}
+	 else  OpponentNamePokemozHandle={Window.addColoredMessage ({Window.getWidth} div 6)*3 ({Window.getHeight} div 6)*2 Name Color}
+	 end
+      end
+   end
+
+   proc{DisplayHpPokemoz IsPlayer Remaining}
+
+   end
    
    proc{DsiplayPokemOz} %display the pokemoz status on the screen
       local X Y PlayerP OpponentP in
@@ -41,11 +68,16 @@ define
 	 PlayerP = X.p1
 	 OpponentP = Y.p1
 
-	 {LaunchPokemozText PlayerP.n}
+	 {LaunchPokemozText PlayerP.n}%Indicates which pokemoz is sent
 	 {Delay TimeDelay}
+	 {DisplayNamePokemoz true PlayerP.t PlayerP.n}
+	 {Delay TimeDelay}
+	 
+	 
 
 	 {LaunchPokemozText OpponentP.n}
 	 {Delay TimeDelay}
+	 {DisplayNamePokemoz false OpponentP.t OpponentP.n}
 
       end
    end
