@@ -19,7 +19,12 @@ define
       end
    end
 
-   
+   proc{ChooseActionText}
+      local Text in
+	 Text = "Choose an action"
+	 {Window.changeMessageText TextHandle Text}
+      end
+   end
    
    proc{AddExp} %add exp to the winning pokemoz
       local X in
@@ -94,7 +99,8 @@ define
    
    proc{DisplayCombat} %Display the combat between two trainers or one trainer and a wild pokemoz
       {IntroductionText}
-      {Delay 500} 
+      {Delay 500}
+      {ChooseActionText}
       {DisplaySelectionAction}
    end
    
