@@ -48,7 +48,7 @@ define
       end
    end
    
-   proc{DisplayNamePokemoz IsPlayer Type Name} %display the name of the pokemoz, isPlayer is there to indicate is it's the player pokemoz
+   proc{DisplayNamePokemoz IsPlayer Type Name} %display the name of the pokemoz, isPlayer is there to indicate if it's the player pokemoz
       local Color in
 	 Color = {ColorByType Type}
 	 if IsPlayer == true then PlayerNamePokemozHandle={Window.addColoredMessage ({Window.getWidth} div 6)*3 ({Window.getHeight} div 6)*4  Name Color}
@@ -57,8 +57,10 @@ define
       end
    end
 
-   proc{DisplayHpPokemoz IsPlayer Remaining}
-
+   proc{DisplayHpPokemoz IsPlayer Remaining}%display the remaining hp of the pokemoz, IsPlayer is there to indicate if it's the player pokemoz
+      if IsPlayer == true then PlayerHpPokemozHandle={Window.addMessage ({Window.getWidth} div 6)*4 ({Window.getHeight} div 6)*4  Remaining}
+      else OpponentHpPokemozHandle={Window.addMessage ({Window.getWidth} div 6)*4 ({Window.getHeight} div 6)*2 Remaining}
+      end
    end
    
    proc{DsiplayPokemOz} %display the pokemoz status on the screen
@@ -71,6 +73,7 @@ define
 	 {LaunchPokemozText PlayerP.n}%Indicates which pokemoz is sent
 	 {Delay TimeDelay}
 	 {DisplayNamePokemoz true PlayerP.t PlayerP.n}
+	 {DisplayHpPokemoz true PlayerP.hp.r}
 	 {Delay TimeDelay}
 	 
 	 
@@ -78,6 +81,7 @@ define
 	 {LaunchPokemozText OpponentP.n}
 	 {Delay TimeDelay}
 	 {DisplayNamePokemoz false OpponentP.t OpponentP.n}
+	 {DisplayHpPokemoz false OpponentP.hp.r}
 
       end
    end
