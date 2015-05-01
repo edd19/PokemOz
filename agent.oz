@@ -92,6 +92,11 @@ define
 		       PokemOz = {LevelManagement pokemoz(t:State.p1.t n:State.p1.n hp:State.p1.hp lx:State.p1.lx xp:((State.p1.xp)+E))}
 		       trainer(c:State.c r:State.r isDefeated:State.isDefeated p1:PokemOz p2:State.p2 p3:State.p3)
 		    end
+
+      []switch(Id) then if Id==2 then  trainer(c:State.c r:State.r isDefeated:State.isDefeated p1:State.p2 p2:State.p1 p3:State.p3) %to switch pokemoz
+			elseif Id==3 then  trainer(c:State.c r:State.r isDefeated:State.isDefeated p1:State.p3 p2:State.p2 p3:State.p1)
+			else  trainer(c:State.c r:State.r isDefeated:State.isDefeated p1:State.p1 p2:State.p2 p3:State.p3)
+			end
 	 
       else State
       end
