@@ -1,3 +1,4 @@
+%Combat entre trainer ou trainer contre pokemoz sauvage
 functor
    
 import
@@ -12,6 +13,7 @@ define
    Player  %Player port
    Opponent  %Opponent port
    Window %window on which we add graphical elements
+   OpponentType %1 for trainer 2 for wild pokemoz
    
    TextHandle  %To change the text on screen
    PlayerNamePokemozHandle
@@ -51,6 +53,17 @@ define
    end
    
    
+   proc{UpdateDisplayNamePokemoz IsPlayer Type Name} %update the name of the pokemon fighting on the window
+      local Color in
+	 Color = {ListPokemoz.colorByType Type}
+	 if IsPlayer == true then {Window.changeMessageText PlayerNamePokemozHandle Name}
+	    {Window.changeMessageColor PlayerNamePokemozHandle Color}
+	    
+	 else  {Window.changeMessageText OpponentNamePokemozHandle Name}
+	    {Window.changeMessageColor OpponentNamePokemozHandle Color}
+	 end
+      end
+   end
    
    proc{DisplayNamePokemoz IsPlayer Type Name} %display the name of the pokemoz, isPlayer is there to indicate if it's the player pokemoz
       local Color in
@@ -160,27 +173,37 @@ define
 	 {AddExp} %add experience to the winnig pokemoz if one
 
 	 {CombatFinished} %ends the combat if one the trainers is defeated
+
+	 {ChooseActionText}
       end
    end
 
    proc{ActionSwitch}%when selecting the button "switch"
-      local Switched SwitchPokemoz in
+      local Switched SwitchPokemoz X in
+	 %switch pokemoz
 	 [SwitchPokemoz] = {Module.link ['switch_pokemoz.ozf']}
 	 {SwitchPokemoz.initializeSwitchWindow Window Player}
 	 Switched = {SwitchPokemoz.displaySwitchWindow}
-	 
+	 %update the screen to display the new pokemoz
+	    {Send Player get(X)}
+	    {UpdateDisplayNamePokemoz true X.p1.t X.p1.n}
+	    {UpdateDisplayHpPokemoz true Player}
       end
    end
    
    proc{ActionFlee}
       IsFinished=2
    end
+
+   proc{ActionCapture}
+      IsFinished=3
+   end
    
    proc{DisplaySelectionAction} %Display the menu selection to choose an action between attack, switch pokemoz or flee
       local Select Grid in
 	 
 	 Select=grid(button(text:"Attack" action:proc{$} {ActionAttack} end) button(text:"Switch" action:proc{$} {ActionSwitch} end) newline %Grid for selecting an action to do when in battle (attack, switch pokemoz or flee)
-		     button(text:"Flee" action:proc{$} {ActionFlee} end) empty  newline
+		     button(text:"Flee" action:proc{$} {ActionFlee} end) button(text:"Capture" action:proc{$} {ActionCapture} end)  newline
 		     handle:Grid)
 	 {Window.addGrid ({Window.getWidth} div 6)*5 ({Window.getHeight} div 6)*5 Select}
 	 
@@ -200,10 +223,17 @@ define
    fun{CombatVSTrainer P O} %combat between 2 trainers where P is the current player and O is an IA trainer
       Player = P
       Opponent = O
-      
+      OpponentType = 1
       {DisplayCombat}
       
       IsFinished
+   end
+
+   fun{CombatVSWild P O}%combat between one trainer and a wild pokemoz where P is the current player and O is the wild pokemoz
+      Player = P
+      Opponent = O
+      OpponentType = 2
+      {DisplayCombatWild}
    end
    
    proc{InitializeCombatWindow W}

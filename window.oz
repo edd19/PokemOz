@@ -14,6 +14,7 @@ export
    AddMessage
    AddColoredMessage
    ChangeMessageText
+   ChangeMessageColor
    CreateNewTag
    AddColoredMessageT
    AddButtonT
@@ -91,6 +92,10 @@ define
 
    proc{ChangeMessageText Handle NewMsg}%Change the label text by the new one (NewMsg)
       {Handle set(NewMsg)}
+   end
+
+   proc{ChangeMessageColor Handle NewColor}%Cahnge the color label by a new one (Color)
+      {Handle set(bg:NewColor)}
    end
 
    fun{CreateNewTag} %create a new tag to add items independently of other item

@@ -34,7 +34,6 @@ define
       {Send Player switch(Id)}
       {CleanWindow}
       Finish=1
-      
    end
    
    proc {DisplayButtonPokemoz Pokemoz Id}%display the button for choosing a pokemoz, id is there to indicate the which pokemoz
@@ -65,13 +64,14 @@ define
       end
    end
    
-   fun{DisplaySwitchWindow}%display the switch window with all the elements
+   fun {DisplaySwitchWindow}%display the switch window with all the elements
       local X in
 	 {Send Player get(X)}
 	 {Window.addFillLabelT "Choose a pokemoz" Tag}
 	 {DisplayActualPokemoz X.p1} %display the pokemoz that is currently fighting
 	 {DisplayOtherPokemoz X.p2 X.p3}%display the other pokemoz that can be switched with
 	 {DisplayReturnButton} %display the return button if the trainer don't want to switch pokemoz finally
+	 
 	 Finish %return 1 if the trainer switched pokemoz and 0 otherwise
       end
    end
