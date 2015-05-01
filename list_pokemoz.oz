@@ -11,6 +11,7 @@ export
    CreatePokemOz
    AttackSuccess
    AttackDamage
+   ColorByType
 
 define
    Number = 3 %Total number of PokemOz
@@ -100,5 +101,13 @@ define
 			      elseif Td=="fire" then 3
 			      else 0 end
       else 0 end
+   end
+
+   fun{ColorByType Type}%return the color corresponding to a type of Pokemoz
+      if Type=="grass" then green
+      elseif Type=="fire" then red
+      elseif Type=="water" then blue
+      else white
+      end
    end
 end

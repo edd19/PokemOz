@@ -1,18 +1,19 @@
 %To switch pokemoz in combat or in the map
 functor
-
 import
-   Combat at 'combat.ozf' %for the ColorByType method
+   ListPokemoz at 'list_pokemoz.ozf'
 export
    InitializeSwitchWindow
    DisplaySwitchWindow
+   
 define
    Window %window on which we display the graphical things
    Player %port for the player trainer
    Finish %1 if the player switched pokemoz and 0 otherwise
 
+   
    proc{InitializeSwitchWindow W P}%intialize the variables for the functor
-      Window = W
+      Window = W      
       Player = P
    end
 
@@ -21,10 +22,10 @@ define
    end
 
    proc{DisplayActualPokemoz Pokemoz}%display the pokemoz that is in combat
-      local Name Color in
+      local Name Color Temp in
 	 Name = Pokemoz.n
-	 Color = {Combat.colorByType Pokemoz.t}
-	 {Window.addColoredMessage ({Window.getWidth} div 6)*3 ({Window.getHeight} div 6)*1 Name Color}
+	 Color = {ListPokemoz.colorByType Pokemoz.t}
+	 Temp = {Window.addColoredMessage ({Window.getWidth} div 6)*3 ({Window.getHeight} div 6)*1 Name Color}
       end
    end
 
@@ -37,10 +38,10 @@ define
    
    proc {DisplayButtonPokemoz Pokemoz Id}%display the button for choosing a pokemoz, id is there to indicate the which pokemoz
       if Pokemoz \= nil then local Desc Color Text in
-				 Color = {Combat.colorByType Pokemoz.t}
-				 Text=Pokemoz.n
-				 Desc=button(text:Text bg:Color action:proc{$} {ActionButtonSwitch Id} end)
-				 {Window.addButton ({Window.getWidth} div 6)*3 ({Window.getHeight} div 6)*Id Desc}
+				Color = {ListPokemoz.colorByType Pokemoz.t}
+				Text=Pokemoz.n
+				Desc=button(text:Text bg:Color action:proc{$} {ActionButtonSwitch Id} end)
+				{Window.addButton ({Window.getWidth} div 6)*3 ({Window.getHeight} div 6)*Id Desc}
 			      end
       end
    end

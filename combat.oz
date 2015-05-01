@@ -2,13 +2,16 @@ functor
    
 import
    OS
-   Window at 'window.ozf'
+   SwitchPokemoz at 'switch_pokemoz.ozf'
+   ListPokemoz at 'list_pokemoz.ozf'
 export
    CombatVSTrainer
+   InitializeCombatWindow
 define 
    IsFinished  %0 if the player winned the combat and 1 if he lost, 2 if the player or the wild pokemoz fled
    Player  %Player port
    Opponent  %Opponent port
+   Window %window on which we add graphical elements
    
    TextHandle  %To change the text on screen
    PlayerNamePokemozHandle
@@ -47,17 +50,11 @@ define
       end
    end
    
-   fun{ColorByType Type}%return the color corresponding to a type of Pokemoz
-      if Type=="grass" then green
-      elseif Type=="fire" then red
-      elseif Type=="water" then blue
-      else white
-      end
-   end
+   
    
    proc{DisplayNamePokemoz IsPlayer Type Name} %display the name of the pokemoz, isPlayer is there to indicate if it's the player pokemoz
       local Color in
-	 Color = {ColorByType Type}
+	 Color = {ListPokemoz.colorByType Type}
 	 if IsPlayer == true then PlayerNamePokemozHandle={Window.addColoredMessage ({Window.getWidth} div 6)*3 ({Window.getHeight} div 6)*4  Name Color}
 	 else  OpponentNamePokemozHandle={Window.addColoredMessage ({Window.getWidth} div 6)*3 ({Window.getHeight} div 6)*2 Name Color}
 	 end
@@ -93,8 +90,6 @@ define
 	 {DisplayHpPokemoz true PlayerP.hp.r}
 	 {Delay TimeDelay}
 	 
-	 
-
 	 {LaunchPokemozText OpponentP.n}
 	 {Delay TimeDelay}
 	 {DisplayNamePokemoz false OpponentP.t OpponentP.n}
@@ -120,6 +115,7 @@ define
       local X Y in
 	 {Send Player defeated(X)} %check if the Player is defeated
 	 {Send Opponent defeated(Y)}%check if the Opponent is defeated
+	 
 	 if X == true then IsFinished=1 {CleanWindowCombat} %if the combat is finished, then we make the screen blank
 	 elseif Y == true then IsFinished=0 {CleanWindowCombat}
 	 else skip
@@ -150,6 +146,7 @@ define
    proc{ActionAttack} %when the player attack the opponent pokemoz
       local Coin in
 	 Coin={OS.rand} mod 2 %generate 0 or 1
+	 
 	 if Coin==0 then %the player attacks first
 	    {Attack Player Opponent}
 	    {UpdateDisplayHpPokemoz false Opponent}
@@ -166,6 +163,14 @@ define
       end
    end
 
+   proc{ActionSwitch}%when selecting the button "switch"
+      local Switched in
+	 {Window.cleanWindow} 
+	 {SwitchPokemoz.initializeSwitchWindow Window Player}
+	 Switched = {SwitchPokemoz.displaySwitchWindow}
+      end
+   end
+   
    proc{ActionFlee}
       IsFinished=2
    end
@@ -173,7 +178,7 @@ define
    proc{DisplaySelectionAction} %Display the menu selection to choose an action between attack, switch pokemoz or flee
       local Select Grid in
 	 
-	 Select=grid(button(text:"Attack" action:proc{$} {ActionAttack} end) button(text:"Change")  newline %Grid for selecting an action to do when in battle (attack, switch pokemoz or flee)
+	 Select=grid(button(text:"Attack" action:proc{$} {ActionAttack} end) button(text:"Switch" action:proc{$} {ActionSwitch} end) newline %Grid for selecting an action to do when in battle (attack, switch pokemoz or flee)
 		     button(text:"Flee" action:proc{$} {ActionFlee} end) empty  newline
 		     handle:Grid)
 	 {Window.addGrid ({Window.getWidth} div 6)*5 ({Window.getHeight} div 6)*5 Select}
@@ -195,13 +200,13 @@ define
       Player = P
       Opponent = O
       
-      {Window.createWindow}
-      {Window.showWindow}
       {DisplayCombat}
       
       IsFinished
    end
    
-   
+   proc{InitializeCombatWindow W}
+      Window = W
+   end
    
 end
