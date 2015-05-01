@@ -30,10 +30,28 @@ define
       end
    end
 
+   fun{CheckIfKO Id}%check if the pokemoz is Ko, Id indicates which pokemoz
+      local X in
+	 {Send Player get(X)}
+
+	 if Id == 2 then if X.p2.hp.r == 0 then true
+			 else false end
+	 elseif Id == 3 then if X.p3.hp.r == 0 then true
+			     else false end
+
+	 end
+      end
+   end
+
    proc{ActionButtonSwitch Id} %action when clicking on the button
-      {Send Player switch(Id)}
-      {CleanWindow}
-      Finish=1
+      local IsKo in
+	 IsKo = {CheckIfKO Id}
+	 if IsKo == false then %cannot switch with a Ko'ed pokemoz
+	    {Send Player switch(Id)}
+	    {CleanWindow}
+	    Finish=1
+	 else skip end
+      end
    end
    
    proc {DisplayButtonPokemoz Pokemoz Id}%display the button for choosing a pokemoz, id is there to indicate the which pokemoz
