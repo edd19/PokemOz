@@ -1,8 +1,8 @@
 functor
    
 import
+   Module
    OS
-   SwitchPokemoz at 'switch_pokemoz.ozf'
    ListPokemoz at 'list_pokemoz.ozf'
 export
    CombatVSTrainer
@@ -164,10 +164,11 @@ define
    end
 
    proc{ActionSwitch}%when selecting the button "switch"
-      local Switched in
-	 {Window.cleanWindow} 
+      local Switched SwitchPokemoz in
+	 [SwitchPokemoz] = {Module.link ['switch_pokemoz.ozf']}
 	 {SwitchPokemoz.initializeSwitchWindow Window Player}
 	 Switched = {SwitchPokemoz.displaySwitchWindow}
+	 
       end
    end
    

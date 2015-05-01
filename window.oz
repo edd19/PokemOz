@@ -14,6 +14,11 @@ export
    AddMessage
    AddColoredMessage
    ChangeMessageText
+   CreateNewTag
+   AddColoredMessageT
+   AddButtonT
+   AddFillLabelT
+   CleanWindowT
    GetWidth
    GetHeight
 define
@@ -87,7 +92,38 @@ define
    proc{ChangeMessageText Handle NewMsg}%Change the label text by the new one (NewMsg)
       {Handle set(NewMsg)}
    end
-      
+
+   fun{CreateNewTag} %create a new tag to add items independently of other item
+      local TagNew in
+	 TagNew = {Canvas newTag($)}
+	 TagNew
+      end
+   end
+
+   fun{AddColoredMessageT X Y Msg Color NewTag}%Add a message on the window and return the handle of the newly created label
+      %Add the message so that the center of it is placed at point (X,Y)
+      %Msg is the text to be written on the screen.
+      local Handle in
+	 {Canvas create(window X Y window:message(init:Msg bg:Color handle:Handle) tags:NewTag)}
+	 Handle %return the handle to change the text on screen if needed
+      end
+   end
+
+    proc{AddButtonT X Y Desc NewTag} %Add a button on the window
+      %Add the button so that the center of it is situated at point (X,Y)
+      %Desc is the button description
+      {Canvas create(window X Y window:Desc tags:NewTag)}
+    end
+
+    proc{AddFillLabelT Msg NewTag}%add a rectangle on the window
+       {Canvas create(window 0 0 window:label(init:Msg bg:white)
+		      height:Height width:Width anchor:nw tags:NewTag) }
+    end
+
+     proc{CleanWindowT NewTag} %delete all elements in the window
+      {NewTag delete}
+   end
+   
    %Get methods
    fun{GetWidth}
       Width
