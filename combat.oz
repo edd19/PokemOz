@@ -7,6 +7,7 @@ import
    ListPokemoz at 'list_pokemoz.ozf'
 export
    CombatVSTrainer
+   CombatVSWild
    InitializeCombatWindow
 define 
    IsFinished  %0 if the player winned the combat and 1 if he lost, 2 if the player or the wild pokemoz fled
@@ -26,7 +27,9 @@ define
    %Texts to be displayed when in combat
    proc{IntroductionText}
       local Text in
-	 Text = "A trainer challenged you"
+	 if OpponentType == 1 then Text = "A trainer challenged you"
+	 else Text = "A wild pokemoz attacked you"
+	 end
 	 TextHandle={Window.addMessage ({Window.getWidth} div 6)*2 ({Window.getHeight} div 6)*5 Text}
       end
    end
@@ -40,8 +43,8 @@ define
 
    proc{LaunchPokemozText PokemozName}
       local Text in
-	 Text = "Trainer send "
-	 {Window.changeMessageText TextHandle {Append Text PokemozName}}
+	 Text = " is going to fight"
+	 {Window.changeMessageText TextHandle {Append PokemozName Text}}
       end
    end
 
@@ -190,9 +193,18 @@ define
 	    {UpdateDisplayHpPokemoz true Player}
       end
    end
+
+   proc {MessageFlee IsPlayer} %message when someone flee, IsPlayer is there to see if it's the player that flee or the the wild pokemoz
+      local Text in
+	 if IsPlayer == true then Text="You flee"
+	 else Text = "The pokemoz flee"
+	 end
+	 {Window.changeMessageText TextHandle Text}
+      end
+   end
    
    proc{ActionFlee}
-      IsFinished=2
+      if OpponentType == 2 then {MessageFlee true} {Delay TimeDelay} {Window.cleanWindow} IsFinished=2 end
    end
 
    proc{ActionCapture}
@@ -224,16 +236,20 @@ define
       Player = P
       Opponent = O
       OpponentType = 1
+      
       {DisplayCombat}
       
       IsFinished
    end
-
+   
    fun{CombatVSWild P O}%combat between one trainer and a wild pokemoz where P is the current player and O is the wild pokemoz
       Player = P
       Opponent = O
       OpponentType = 2
-      {DisplayCombatWild}
+      
+      {DisplayCombat}
+
+      IsFinished
    end
    
    proc{InitializeCombatWindow W}
