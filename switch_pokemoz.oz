@@ -33,8 +33,9 @@ define
    fun{CheckIfKO Id}%check if the pokemoz is Ko, Id indicates which pokemoz
       local X in
 	 {Send Player get(X)}
-
-	 if Id == 2 then if X.p2.hp.r == 0 then true
+	 if Id == 1 then if X.p1.hp.r == 0 then true
+			 else false end
+	 elseif Id == 2 then if X.p2.hp.r == 0 then true
 			 else false end
 	 elseif Id == 3 then if X.p3.hp.r == 0 then true
 			     else false end
@@ -83,12 +84,14 @@ define
    end
    
    fun {DisplaySwitchWindow}%display the switch window with all the elements
-      local X in
+      local X IsKo in
 	 {Send Player get(X)}
 	 {Window.addFillLabelT "Choose a pokemoz" Tag}
 	 {DisplayActualPokemoz X.p1} %display the pokemoz that is currently fighting
 	 {DisplayOtherPokemoz X.p2 X.p3}%display the other pokemoz that can be switched with
-	 {DisplayReturnButton} %display the return button if the trainer don't want to switch pokemoz finally
+
+	 IsKo = {CheckIfKO 1} %has to switch if the first pokemoz is KO
+	 if IsKo == false then {DisplayReturnButton} end %display the return button if the trainer don't want to switch pokemoz finally end
 	 
 	 Finish %return 1 if the trainer switched pokemoz and 0 otherwise
       end
