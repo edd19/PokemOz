@@ -13,7 +13,7 @@ P O
 P = {Agent.newIA T1 1} 
 O = {Agent.newIA T2 2}
 {Combat.initializeCombatWindow Window}
-T={Combat.combatVSTrainer P O}
+T={Combat.automaticFight P O 1}
 
 
 X

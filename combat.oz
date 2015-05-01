@@ -9,6 +9,7 @@ export
    CombatVSTrainer
    CombatVSWild
    InitializeCombatWindow
+   AutomaticFight
 define 
    IsFinished  %0 if the player winned the combat and 1 if he lost, 2 if the player or the wild pokemoz fled
    Player  %Player port
@@ -23,6 +24,7 @@ define
    OpponentHpPokemozHandle
    
    TimeDelay = 1000
+   AutoDelay = 500
 
    %Texts to be displayed when in combat
    proc{IntroductionText}
@@ -127,14 +129,14 @@ define
       {Window.cleanWindow}
    end
    
-   proc{CombatFinished} %check if the combat is finished
+   fun{CombatFinished} %check if the combat is finished
       local X Y in
 	 {Send Player defeated(X)} %check if the Player is defeated
 	 {Send Opponent defeated(Y)}%check if the Opponent is defeated
 	 
-	 if X == true then IsFinished=1 {CleanWindowCombat} %if the combat is finished, then we make the screen blank
-	 elseif Y == true then IsFinished=0 {CleanWindowCombat}
-	 else skip
+	 if X == true then IsFinished=1 {CleanWindowCombat} true%if the combat is finished, then we make the screen blank
+	 elseif Y == true then IsFinished=0 {CleanWindowCombat} true
+	 else false
 	 end
       end
    end
@@ -167,22 +169,28 @@ define
    end
    
    proc{IASwitchPokemoz}%the trainer IA switch pokemoz
-      local X in
+      local X X2 in
 	 {Send Opponent get(X)}
 	 if X.p2 \= nil then if X.p2.hp.r \= 0 then {Send Opponent switch(2)} {DisplayMessageIASwitch} {Delay TimeDelay}
 			     end
 	 elseif X.p3 \= nil then if X.p3.hp.r \= 0 then {Send Opponent switch(3)} {DisplayMessageIASwitch} {Delay TimeDelay}
 				 end
 	 else skip end
+	 {Send Opponent get(X2)}
+	 {UpdateDisplayNamePokemoz false X2.p1.t X2.p1.n}
+	 {UpdateDisplayHpPokemoz false Opponent}
       end
    end
 
    proc{AfterAttack} %aafter the two pokemoz attacked
       {AddExp} %add experience to the winnig pokemoz if one
-
-      {CombatFinished} %ends the combat if one the trainers is defeated
-      if {IsKo Player} == true then {ActionSwitch} end %if the player pokemoz is ko then we need to switch
-
+      local Temp in
+	 Temp =  {CombatFinished} %ends the combat if one the trainers is defeated
+	 if {IsKo Player} == true then if Temp==false then {ActionSwitch} end %if the player pokemoz is ko then we need to switch
+	 end
+      end
+     
+	
       {ChooseActionText}
    end
    
@@ -256,7 +264,7 @@ define
 
    proc {MessageCapture Success} %message when capturing a pokemoz
       local Text in
-	 if Success = true then Text = "You captured the pokemoz"
+	 if Success == true then Text = "You captured the pokemoz"
 	 else Text = "You failed to capture the pokemoz"
 	 end
 	 {Window.changeMessageText TextHandle Text}
@@ -295,6 +303,11 @@ define
 	 if Success == true then {MessageCapture true} {Delay TimeDelay} {AddPokemoz} {Window.cleanWindow} IsFinished=3
 	 else {MessageCapture false}
 	 end
+	 {IAReactionAttack} %If you switch pokemoz then the IA reacts
+
+	 {AfterAttack}
+
+	 if {IsKo Player} == truen then {ActionSwitch} end %if the attack ko'ed the player pokemoz	 
       end
    end
    
@@ -336,6 +349,69 @@ define
       
       {DisplayCombat}
 
+      IsFinished
+   end
+
+   proc {DisplayAutoFight}      %display when launching auto fight
+      {DisplayPokemOz}
+   end
+   proc{AutoSwitch} %change the pokemoz for the automatic fight
+      local X X2 in
+	 {Send Player get(X)}
+	 if X.p2 \= nil then if X.p2.hp.r \= 0 then {Send Player switch(2)} {DisplayMessageIASwitch} {Delay TimeDelay}
+			     end
+	 elseif X.p3 \= nil then if X.p3.hp.r \= 0 then {Send Player switch(3)} {DisplayMessageIASwitch} {Delay TimeDelay}
+				 end
+	 else skip end
+	 {Send Player get(X2)}
+	 {UpdateDisplayNamePokemoz true X2.p1.t X2.p1.n}
+	 {UpdateDisplayHpPokemoz true Player}
+      end
+   end
+
+   proc{AutoCapture}
+      local Success  Temp in
+	 Success = {CaptureSuccess}
+	 if Success == true then {MessageCapture true} {Delay TimeDelay} {AddPokemoz} {Window.cleanWindow} IsFinished=3
+	 else {MessageCapture false}
+	 end
+	 {IAReactionAttack} %If you switch pokemoz then the IA reacts
+
+	 if {IsKo Player} == true then {AutoSwitch} end %if the attack ko'ed the player pokemoz	 
+      end
+   end
+   
+   proc{FightRoutine} %fighting routine when in automatic fight
+      local Temp Random in
+      {Attack Player Opponent}
+      {UpdateDisplayHpPokemoz false Opponent}
+      
+      if {IsKo Opponent} == false then {IAReactionAttack}  %if the attack received didn't koed the opponent's pokemoz
+      else {IASwitchPokemoz} end
+	 
+      {AddExp} %add experience to the winnig pokemoz if one
+
+      Temp={CombatFinished} %ends the combat if one the trainers is defeated
+      if {IsKo Player} == true then {AutoSwitch} end %if the player pokemoz is ko then we need to switch
+      {Delay AutoDelay}
+      if OpponentType == 2 then 
+	 Random = {OS.rand} mod 10
+
+	 if Random == 5 then {AutoCapture} end
+      end
+      
+      if Temp==false then {FightRoutine} end
+      end
+   end
+   
+   fun{AutomaticFight P O Type} %automatic fight
+      Player = P
+      Opponent = O
+      OpponentType = Type
+      {IntroductionText}
+      {DisplayAutoFight}
+      {Delay AutoDelay}
+      {FightRoutine}
       IsFinished
    end
    
