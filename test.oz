@@ -8,7 +8,7 @@ declare
 Temp1={Pokemoz.createPokemOz 5}
 Temp2={Pokemoz.createPokemOz 5}
 T1 = trainer(c:0 r:0 isDefeated:false p1:Temp1 p2:Temp2 p3:nil)
-T2 = trainer(c:0 r:0 isDefeated:false p1:Temp2 p2:nil p3:nil)
+T2 = trainer(c:0 r:0 isDefeated:false p1:Temp2 p2:Temp1 p3:nil)
 P O
 P = {Agent.newIA T1 1} 
 O = {Agent.newIA T2 2}

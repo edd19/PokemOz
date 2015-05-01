@@ -159,6 +159,33 @@ define
       {UpdateDisplayHpPokemoz true Player}
    end
 
+   proc {DisplayMessageIASwitch}
+      local Text in
+	 Text = "Opponent switch pokemoz"
+	 {Window.changeMessageText TextHandle Text}
+      end
+   end
+   
+   proc{IASwitchPokemoz}%the trainer IA switch pokemoz
+      local X in
+	 {Send Opponent get(X)}
+	 if X.p2 \= nil then if X.p2.hp.r \= 0 then {Send Opponent switch(2)} {DisplayMessageIASwitch} {Delay TimeDelay}
+			     end
+	 elseif X.p3 \= nil then if X.p3.hp.r \= 0 then {Send Opponent switch(3)} {DisplayMessageIASwitch} {Delay TimeDelay}
+				 end
+	 else skip end
+      end
+   end
+
+   proc{AfterAttack} %aafter the two pokemoz attacked
+      {AddExp} %add experience to the winnig pokemoz if one
+
+      {CombatFinished} %ends the combat if one the trainers is defeated
+      if {IsKo Player} == true then {ActionSwitch} end %if the player pokemoz is ko then we need to switch
+
+      {ChooseActionText}
+   end
+   
    proc{ActionAttack} %when the player attack the opponent pokemoz
       local Coin in
 	 Coin={OS.rand} mod 2 %generate 0 or 1
@@ -166,21 +193,23 @@ define
 	 if Coin==0 then %the player attacks first
 	    {Attack Player Opponent}
 	    {UpdateDisplayHpPokemoz false Opponent}
-	    if {IsKo Opponent} == false then {IAReactionAttack} end %if the attack received didn't koed the opponent's pokemoz
+	    if {IsKo Opponent} == false then {IAReactionAttack}  %if the attack received didn't koed the opponent's pokemoz
+	    else {IASwitchPokemoz}
+	    end
 	    
 	 else %the opponent attacks first 
 	    {IAReactionAttack}
 	    if {IsKo Player} == false then {Attack Player Opponent} {UpdateDisplayHpPokemoz false Opponent} end
 	 end
 
-	 {AddExp} %add experience to the winnig pokemoz if one
-
-	 {CombatFinished} %ends the combat if one the trainers is defeated
-
-	 {ChooseActionText}
+	 {AfterAttack}
       end
    end
 
+   proc{IAReactionSwitch} %reaction of the IA trainer when you switch pokemoz
+      {IAReactionAttack}
+   end
+   
    proc{ActionSwitch}%when selecting the button "switch"
       local Switched SwitchPokemoz X in
 	 %switch pokemoz
@@ -191,6 +220,12 @@ define
 	 {Send Player get(X)}
 	 {UpdateDisplayNamePokemoz true X.p1.t X.p1.n}
 	 {UpdateDisplayHpPokemoz true Player}
+
+	 {IAReactionSwitch} %If you switch pokemoz then the IA reacts
+
+	 {AfterAttack}
+
+	 if {IsKo Player} == truen then {ActionSwitch} end %if the attack ko'ed the player pokemoz	 
       end
    end
 
