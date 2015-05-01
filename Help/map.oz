@@ -8,6 +8,7 @@ export
    GenerateGrid
    GenerateGameMap
    CreateRectangle
+   SelectionScreen
 define
    %Hardcoded Map
    Map=map(r(1 1 1 0 0 0 0)
@@ -62,7 +63,7 @@ define
       {Window bind(event:"<Left>" action:proc{$} {Tag delete} {CreateRectangle {Max 0 X-TmpL} Y ListTrainers} end)}
       {Window bind(event:"<Right>" action:proc{$} {Tag delete} {CreateRectangle {Min H-TmpL X+TmpL} Y ListTrainers} end)}
    end
-   proc{selectionScreen}
+   proc{SelectionScreen}
       {Window show} %show the map
       {GenerateGrid H}
       {GenerateGameMap Map}
