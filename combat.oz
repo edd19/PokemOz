@@ -188,9 +188,9 @@ define
 	 {SwitchPokemoz.initializeSwitchWindow Window Player}
 	 Switched = {SwitchPokemoz.displaySwitchWindow}
 	 %update the screen to display the new pokemoz
-	    {Send Player get(X)}
-	    {UpdateDisplayNamePokemoz true X.p1.t X.p1.n}
-	    {UpdateDisplayHpPokemoz true Player}
+	 {Send Player get(X)}
+	 {UpdateDisplayNamePokemoz true X.p1.t X.p1.n}
+	 {UpdateDisplayHpPokemoz true Player}
       end
    end
 
@@ -207,8 +207,60 @@ define
       if OpponentType == 2 then {MessageFlee true} {Delay TimeDelay} {Window.cleanWindow} IsFinished=2 end
    end
 
-   proc{ActionCapture}
-      IsFinished=3
+   fun{CaptureSuccess} %return true if the capture succeeded, else false
+      local Probability Random X in
+	 {Send Opponent get(X)}
+	 Probability = (X.hp.m - X.hp.r)*5 %probability to capture the pokemoz
+	 Random = {OS.rand} mod 100
+
+	 if Random < Probability then true
+	 else false
+	 end
+      end
+   end
+
+   proc {MessageCapture Success} %message when capturing a pokemoz
+      local Text in
+	 if Success = true then Text = "You captured the pokemoz"
+	 else Text = "You failed to capture the pokemoz"
+	 end
+	 {Window.changeMessageText TextHandle Text}
+      end
+   end
+
+   fun{FindSpace} %return the empty space for the trainer
+      local X in
+	 {Send Player get(X)}
+	 if X.p2 \= nil then 2
+	 elseif X.p3 \= nil then 3
+	 else 0
+	 end
+      end
+   end
+      
+   proc{FullPokemozMessage}%message when having already 3 pokemoz and trying to capture one
+      local Text in
+	 Text = "You have already 3 Pokemoz"
+	 {Window.changeMessageText TextHandle Text}
+      end
+   end
+   
+   proc{AddPokemoz}%add pokemoz for the player
+      local Space Y in
+	 Space = {FindSpace}
+	 if Space == 0 then {FullPokemozMessage} {Delay TimeDelay}
+	 else {Send Opponent get(Y)} {Send Player add(id:Space p:Y.p1)} 
+	 end
+      end
+   end
+   
+   proc{ActionCapture}%when clicking on the button capture
+      local Success  in
+	 Success = {CaptureSuccess}
+	 if Success == true then {MessageCapture true} {Delay TimeDelay} {AddPokemoz} {Window.cleanWindow} IsFinished=3
+	 else {MessageCapture false}
+	 end
+      end
    end
    
    proc{DisplaySelectionAction} %Display the menu selection to choose an action between attack, switch pokemoz or flee

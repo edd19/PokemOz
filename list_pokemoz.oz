@@ -81,7 +81,7 @@ define
 
    fun{AttackSuccess La Ld}%return true if an attack succeed and false otherwise, La is the level of the attacker and Ld of the defender
       local Probability N in
-	 Probability = (((6+La-Ld)*9)) mod 100 %probability for an attack to succed based on the difference of level of the two pokemoz
+	 Probability = (((6+La-Ld)*9)) %probability for an attack to succed based on the difference of level of the two pokemoz
 	 N = {OS.rand} mod 100 %N is a number between 0 and 99
 	 if N < Probability then true
 	 else false
