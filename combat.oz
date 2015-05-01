@@ -111,13 +111,17 @@ define
 	 end
       end
    end      
+
+   proc{CleanWindowCombat} %destroy all elements on the window (blank screen)
+      {Window.cleanWindow}
+   end
    
    proc{CombatFinished} %check if the combat is finished
       local X Y in
 	 {Send Player defeated(X)} %check if the Player is defeated
 	 {Send Opponent defeated(Y)}%check if the Opponent is defeated
-	 if X == true then IsFinished=1
-	 elseif Y == true then IsFinished=0
+	 if X == true then IsFinished=1 {CleanWindowCombat} %if the combat is finished, then we make the screen blank
+	 elseif Y == true then IsFinished=0 {CleanWindowCombat}
 	 else skip
 	 end
       end
