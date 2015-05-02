@@ -5,6 +5,8 @@
 functor
 
 import
+   OS
+   Browser
    ListPokemOz at 'list_pokemoz.ozf'
 export
    NewPlayer
@@ -109,7 +111,15 @@ define
       thread {Loop S R} end
       P % return the port corresponding to the trainer
    end
-
+   %A AJOUTER DANS UTIL
+   fun{GenerateRandom04}
+      local R S in
+	 
+	 R={OS.rand}
+	 S=R mod 10
+	 S div 2
+      end
+   end
    fun{PokemOzEvent Msg R} %pokemoz event caused by message received
       case Msg
       of get(P) then P=R  R end
@@ -129,7 +139,7 @@ define
    end
 
    fun{NewPlayer } %Creates a new player
-      Player={NewTrainer trainer(c:0 r:0 isDefeated:false p1:nil p2:nil p3:nil)}
+      Player={NewTrainer trainer(c:{OS.rand} mod 7 r:{OS.rand} mod 7 isDefeated:false p1:nil p2:nil p3:nil)}
       Player
    end
 
