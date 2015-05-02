@@ -101,6 +101,7 @@ define
 	    %Concurrence?
 	    {Browser.browse a}
 	    Tag={Canvas newTag($)}
+	    %{Canvas create(window 10 10 window:button(text:"Test" bg:blue))}
 	    {Canvas create(rect 10 10 100 100 fill:blue tags:Tag)}
 	    {Browser.browse b}
 	    {Browser.browse T2}
