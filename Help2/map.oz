@@ -4,7 +4,6 @@ functor
 import
    Browser
    OS
-%   Float
    QTk at 'x-oz://system/wp/QTk.ozf'
   
    
@@ -91,7 +90,7 @@ define
 	       {Browser.browse aaaa}
 	       H={Canvas newTag($)}
 	       {Canvas create(rect 10 10 100 100 fill:blue tags:H)}
-	       {Browser.browse bbbb}
+	        {Browser.browse bbbb}
 	       {InitRectangles2 H|LAcc N-1}
 	    end
 	 end
@@ -183,9 +182,10 @@ define
       case ListTrainers of listMoves(player:M 1:M1 2:M2 3:M3 4:M4 5:M5 6:M6 7:M7 8:M8 9:M9 10:M10) then
 	 local Temp1 Temp2 Temp3 Temp4 Temp5 X1 Y1 X2 Y2 X3 Y3 X4 Y4 X5 Y5 in % Pour l'instant 5 % Ces Temp contiennent les coordonnees de chacun des rectangles
 	    {ListTags.1 getCoords(Temp1)}
-	 
+	   % {Browser.browse Temp1} %s'affiche
 	    {ListTags.1 getCoords(Temp2)}
-
+	  %  {Browser.browse Temp2} %s'affiche
+	   % {Browser.browse ListTags.1}
 	    {Browser.browse M1}
 	    {Browser.browse M2}
 	    {Browser.browse zzzzzzzzzzz1}
@@ -196,20 +196,17 @@ define
 	    {Browser.browse {Equals M1 4}}
 	    %X1={Max {Min (NbLines-1)*TmpL Temp1.1+{Equals M1 2}-{Equals M1 4}} 0} %Rappel: 1=haut, 2=droite, 3=bas,4=gauche
 	    local X1 Y1 E1 E2 Z in
-	      X1={Float.toInt Temp1.1}+{Equals M1 2}-{Equals M1 4} %Rappel: 1=haut, 2=droite, 3=bas,4=gauche
-	      {Browser.browse zzzzzzzzzzz2}
-	      Y1={Max {Min (NbLines-1)*TmpL {Float.toInt Temp1.2.1} +{Equals M1 3}-{Equals M1 1}} 0} %On s'assure aussi que ces deplacements restent dans la fenetre
+	       X1={Float.toInt Temp1.1}+{Equals M1 2}-{Equals M1 4}
+	       {Browser.browse zzzzzzzzzzz2}
+	       Y1={Max {Min (NbLines-1)*TmpL {Float.toInt Temp1.2.1}+{Equals M1 3}-{Equals M1 1}} 0} %On s'assure aussi que ces deplacements restent dans la fenetre
 	     
 	       {Browser.browse zzzzzzzzzzz3}
 	       {Browser.browse M1}
-	       {Browser.browse Temp1.1}
-	       Z=10
 	      
-	       if M1==2 then E1=1 else E1=0 end 
+	       if M1==2 then E1=1 else E1=0 end
 	       if M1==4 then E2=2 else E2=0 end
-	       {Browser.browse E1+Z}
-.
-	       {Browser.browse 10+E1-E2}
+	       % BLOQUE ICI, COMPREND PAS :(
+	       %...........
 	       {Browser.browse X1}
 	       {Browser.browse zzzzzzzzzzz4}
 	       {Browser.browse Y1}
@@ -236,7 +233,7 @@ define
 	 [] listMoves(player:M 1:M1 2:M2 3:M3 4:M4 5:M5 6:M6 7:M7 8:M8 9:M9 10:M10)|S2 then
 	    {MoveTrainers listMoves(player:M 1:M1 2:M2 3:M3 4:M4 5:M5 6:M6 7:M7 8:M8 9:M9 10:M10)}
 	    {Loop S2}
-%%%%
+	    %%%%
 	 end
       end
       P S 
@@ -254,7 +251,7 @@ define
       ListTags={InitRectangles 10}
       {Browser.browse xxxxx}
       {MoveTrainers listMoves(player:0 1:3 2:0 3:0 4:0 5:0 6:0 7:0 8:0 9:0 10:0)}
-      {Browser.browse yyyyy}
+       {Browser.browse yyyyy}
       {Browser.browse ListTags.1}
       {CreateRectangle W-TmpL H-TmpL nil}
    end
