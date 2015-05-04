@@ -4,7 +4,7 @@ functor
 import
    OS
    QTk at 'x-oz://system/wp/QTk.ozf'
-   
+   Browser
 export
    MapScreen
    
@@ -58,10 +58,11 @@ define
    fun{CheckIfEmpty X1 Y1 List} %check if this case doesn't contain an element
       fun{Loop ListTags}
 	 case ListTags
-	 of H|T then local Coord in
+	 of H|T then local Coord PlayerCoord in
 			{H getCoords(Coord)}
+			{Tag getCoords(PlayerCoord)}
 			if X1 == {Float.toInt Coord.1} andthen Y1=={Float.toInt Coord.2.1} then false
-			%add another for the player
+			elseif  X1 == {Float.toInt PlayerCoord.1} andthen Y1=={Float.toInt PlayerCoord.2.1} then false
 			else {Loop T}
 			end
 		     end
@@ -129,11 +130,39 @@ define
 	 {Send MoveManager get(Move)}
 	 if Move == true then 
 	    {Send MoveManager move(listMoves(player:0 1:({OS.rand} mod 10) 2:({OS.rand} mod 10) 3:({OS.rand} mod 10) 4:({OS.rand} mod 10) 5:({OS.rand} mod 10) 6:({OS.rand} mod 10)
-				 7:({OS.rand} mod 10) 8:({OS.rand} mod 10) 9:({OS.rand} mod 10) 10:({OS.rand} mod 10)))}
+					     7:({OS.rand} mod 10) 8:({OS.rand} mod 10) 9:({OS.rand} mod 10) 10:({OS.rand} mod 10)))}
 	 end
 
-	 {Delay 500}
+	 {Delay 1000}
 	 {RandomMoves}
+      end
+   end
+
+   fun{CheckIfCombat X1 Y1 List}%check if a combat happens against a trainer
+      fun{Loop X1 Y1 Acc ListTags}
+	 case ListTags
+	 of H|T then local Coord PlayerCoord in
+			{H getCoords(Coord)}
+			{Tag getCoords(PlayerCoord)}
+			if X1 == {Float.toInt Coord.1} andthen Y1=={Float.toInt Coord.2.1} then Acc
+			elseif  X1 == {Float.toInt PlayerCoord.1} andthen Y1=={Float.toInt PlayerCoord.2.1} then 11
+			else {Loop X1 Y1 Acc+1 T}
+			end
+		     end
+	 else 0
+	 end
+      end
+      A B C D
+   in
+      A = {Loop X1+TmpL Y1 1 List}
+      B = {Loop X1-TmpL Y1 1 List}
+      C = {Loop X1 Y1+TmpL 1 List}
+      D = {Loop X1 Y1-TmpL 1 List}
+      if A \= 0 then A
+      elseif B \= 0 then B
+      elseif C \= 0 then C
+      elseif D \= 0 then D
+      else 0
       end
    end
 
@@ -141,6 +170,13 @@ define
       case Msg
       of move(M) then {MoveTrainers M State.l} State
       [] get(B) then B = State.b State
+      []combat(X Y) then local Temp in
+			    Temp = {CheckIfCombat X Y State.l} 
+			    if Temp == 0 then State
+			    elseif Temp == 11 then {Browser.browse Temp} State
+			    else {Browser.browse Temp}  State
+			    end
+			 end
       else State
       end
    end
@@ -159,16 +195,24 @@ define
    end
 
 
-   proc{CreateRectangle X Y ListTrainers}	%procedure that creates a player rectangle and moves it
+  
+
+   proc{MovePlayer X Y } %move the player and check if a combat happens
+      {Tag delete}
+      {CreateRectangle X Y}
+      {Send MoveManager combat(X Y)}
+   end
+
+   proc{CreateRectangle X Y}	%procedure that creates a player rectangle and moves it
      
       {Canvas create(rect X Y X+TmpL Y+TmpL fill:blue tags:Tag)} 
 
-      {Window bind(event:"<Up>" action:proc{$} {Tag delete} {CreateRectangle X {Max 0 Y-TmpL} ListTrainers } end)}
+      {Window bind(event:"<Up>" action:proc{$}  {MovePlayer X {Max 0 Y-TmpL}} end)}
       %move the rectangle by deleting the current one
-      {Window bind(event:"<Down>" action:proc{$} {Tag delete} {CreateRectangle X {Min H-TmpL Y+TmpL} ListTrainers} end)}
+      {Window bind(event:"<Down>" action:proc{$} {MovePlayer X {Min H-TmpL Y+TmpL}} end)}
       % and creating a new one in the direction indicated
-      {Window bind(event:"<Left>" action:proc{$} {Tag delete} {CreateRectangle {Max 0 X-TmpL} Y ListTrainers} end)}
-      {Window bind(event:"<Right>" action:proc{$} {Tag delete} {CreateRectangle {Min H-TmpL X+TmpL} Y ListTrainers} end)}
+      {Window bind(event:"<Left>" action:proc{$} {MovePlayer {Max 0 X-TmpL} Y} end)}
+      {Window bind(event:"<Right>" action:proc{$} {MovePlayer {Min H-TmpL X+TmpL} Y} end)}
       
    end
   
@@ -177,11 +221,14 @@ define
 
       {GenerateGrid H}
       {GenerateGameMap Map}
+
+      Tag={Canvas newTag($)}
+      {CreateRectangle (NbLines-1)*TmpL 0}
+      
       ListTags = {InitRectangles}
 
       {NewMoveManager}
-      Tag={Canvas newTag($)}
-      {CreateRectangle (NbLines-1)*TmpL 0 nil}
+
       
       {RandomMoves}
       
