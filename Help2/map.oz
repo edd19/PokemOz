@@ -91,7 +91,39 @@ define
       Random = ({OS.rand} mod 10)+1
       {InitRectangles2 nil Random}
    end
-  
+
+
+    fun{Equals A B} %return 1 if the two elements are equals and 0 otherwise
+      if A==B then 1
+      else 0
+      end
+   end
+   
+    %------------------------
+   %Receive a record of type: listMoves(player:M 1:M1 2:M2 3:M3 4:M4 5:M5 6:M6 7:M7 8:M8 9:M9 10:M10)
+   %And move each corresponding rectangle on the map at the correct direction
+   proc{MoveTrainers ListMoves ListTags}
+      proc{Loop Acc List}
+	 case List
+	 of  H|T then local Coord X1 Y1 in 
+			 {H getCoords(Coord)}
+			 X1={Max {Min (NbLines-1)*TmpL {Float.toInt Coord.1}+({Equals ListMoves.Acc 2}-{Equals ListMoves.Acc 4})*TmpL} 0} %generates new coordinates depending of the movement
+			 Y1={Max {Min (NbLines-1)*TmpL {Float.toInt Coord.2.1}+({Equals ListMoves.Acc 3}-{Equals ListMoves.Acc 1})*TmpL} 0}
+			    
+			 {H setCoords(X1 Y1 X1+TmpL Y1+TmpL)}
+			 {Loop Acc+1 T}
+		      end
+	 else skip
+	 end
+      end
+   in
+      {Loop 1 ListTags}
+   end
+
+   fun{RandomMoves} %generates random moves 
+      listMoves(player:0 1:({OS.rand} mod 10) 2:({OS.rand} mod 10) 3:({OS.rand} mod 10) 4:({OS.rand} mod 10) 5:({OS.rand} mod 10) 6:({OS.rand} mod 10)
+		7:({OS.rand} mod 10) 8:({OS.rand} mod 10) 9:({OS.rand} mod 10) 10:({OS.rand} mod 10))
+   end
   
    proc{MapScreen}%draw the map on the screen and launch the movement of the trainers
       {Window show}
@@ -99,6 +131,11 @@ define
       {GenerateGrid H}
       {GenerateGameMap Map}
       ListTags = {InitRectangles}
+
+      {Delay 2000}
+
+      {MoveTrainers {RandomMoves} ListTags}
+      
 
       
    end
