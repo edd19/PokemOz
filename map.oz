@@ -23,6 +23,7 @@ define
 
    Desc
    Window
+   Auto
    
    proc{DispW}
       Desc = td(canvas(bg:white	%create a canvas representing the map
@@ -103,7 +104,10 @@ define
 	 Opponent = {Agent.newIA Trainer 1}
 
 	 {Combat.initializeCombatWindow Window}
-	 ResultCombat = {Combat.combatVSWild Player Opponent}
+	 if Auto == false then
+	    ResultCombat = {Combat.combatVSWild Player Opponent}
+	 else ResultCombat = {Combat.automaticFight Player Opponent 2}
+	 end
 	 {AfterCombat ResultCombat}
       end
    end
@@ -128,7 +132,10 @@ define
 	 Opponent = {Agent.newIA Trainer 1}
 
 	 {Combat.initializeCombatWindow Window}
-	 ResultCombat = {Combat.combatVSTrainer Player Opponent}
+	 if Auto == false then
+	    ResultCombat = {Combat.combatVSTrainer Player Opponent}
+	 else  ResultCombat = {Combat.automaticFight Player Opponent 1}
+	 end
 	 {AfterCombat ResultCombat}
       end
    end
@@ -383,9 +390,42 @@ define
       {Window bind(event:"<Right>" action:proc{$} {MovePlayer {Min H-TmpL X+TmpL} Y} end)}
       
    end
+
+   proc{AutoPlayer X Y} %move the player and check if a combat happens
+      local Var in
+	 {Send MoveManager get(Var)}
+	 if Var==true then
+	    {Tag setCoords(X Y-TmpL X+TmpL Y)}
+	    {CheckIfWin X Y}
+	    {Send MoveManager combatplayer(X Y)}
+	    
+	    local Ret in
+	       {CheckInGrass X Y Ret}
+	       if Ret==true then {Send MoveManager combatgrass(X Y)}
+	       else
+		  skip
+	       end
+	    end
+	    
+	 end
+      end
+   end
+
+   proc {AutoGame}
+      proc {Loop X Y}
+	 {Delay 300}
+	 {AutoPlayer X Y-TmpL}
+	 
+	 {Loop X Y-TmpL}
+      end
+   in
+      {Canvas create(rect (NbLines-1)*TmpL (NbLines-1)*TmpL (NbLines-1)*TmpL+TmpL (NbLines-1)*TmpL+TmpL fill:blue tags:Tag)}
+      thread {Loop (NbLines-1)*TmpL (NbLines-1)*TmpL} end
+   end
   
-   proc{MapScreen P} %draw the map on the screen and launch the movement of the trainers
+   proc{MapScreen P A} %draw the map on the screen and launch the movement of the trainers
       Player = P
+      Auto = A
       {DispW}
       {Window show}
 
@@ -393,11 +433,11 @@ define
       {GenerateGameMap Map}
 
       Tag={Canvas newTag($)}
-      %
-     % {Canvas create(rect (NbLines-1)*TmpL 0 ((NbLines-1)*TmpL)+TmpL TmpL fill:blue tags:Tag)}
-       %
-		     
-     {CreateRectangle (NbLines-1)*TmpL (NbLines-1)*TmpL}
+
+      if Auto == false then %manual game
+	 {CreateRectangle (NbLines-1)*TmpL (NbLines-1)*TmpL}
+      else {AutoGame}%automatic game
+      end
       
       ListTags = {InitRectangles}
 

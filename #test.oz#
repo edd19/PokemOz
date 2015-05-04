@@ -6,6 +6,8 @@ declare
 [MapCreator] = {Module.link['MapCreator.ozf']}
 [SelectStarter] = {Module.link ['select_starter.ozf']}
 
+
+
 Select = {SelectStarter.selectionScreen} %choose a pokemoz for starter
 Player = SelectStarter.player %create a player port depending of the choice for starter pokemoz
 
@@ -13,7 +15,7 @@ Player = SelectStarter.player %create a player port depending of the choice for 
 
 {Map.initializeMyMap @(MapCreator.theMap) @(MapCreator.nbRows) @(MapCreator.nbCols)}
 
-{Map.mapScreen Player true}%show the map
+{Map.mapScreen Player}%show the map
 
 
 

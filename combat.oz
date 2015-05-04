@@ -375,43 +375,48 @@ define
 				 end
 	 else skip end
 	 {Send Player get(X2)}
+	 {Browser.browse X2}
 	 {UpdateDisplayNamePokemoz true X2.p1.t X2.p1.n}
 	 {UpdateDisplayHpPokemoz true Player}
       end
    end
 
-   proc{AutoCapture}
+   fun{AutoCapture}
       local Success  Temp in
 	 Success = {CaptureSuccess}
-	 if Success == true then {MessageCapture true} {Delay TimeDelay} {AddPokemoz} {Window.cleanWindow} IsFinished=3
+	 if Success == true then {MessageCapture true} {Delay TimeDelay} {AddPokemoz} {CleanWindowCombat} IsFinished=3 true
 	 else {MessageCapture false}
+	    {IAReactionAttack} %If you switch pokemoz then the IA reacts
+	    
+	    if {IsKo Player} == true then {AutoSwitch} end %if the attack ko'ed the player pokemoz
+	    false
 	 end
-	 {IAReactionAttack} %If you switch pokemoz then the IA reacts
-
-	 if {IsKo Player} == true then {AutoSwitch} end %if the attack ko'ed the player pokemoz	 
-      end
+      end	
    end
    
    proc{FightRoutine} %fighting routine when in automatic fight
-      local Temp Random in
-      {Attack Player Opponent}
-      {UpdateDisplayHpPokemoz false Opponent}
+      local Temp Random Captured in
+	 {Attack Player Opponent}
+	 {UpdateDisplayHpPokemoz false Opponent}
       
-      if {IsKo Opponent} == false then {IAReactionAttack}  %if the attack received didn't koed the opponent's pokemoz
-      else {IASwitchPokemoz} end
+	 if {IsKo Opponent} == false then {IAReactionAttack}  %if the attack received didn't koed the opponent's pokemoz
+	 else {IASwitchPokemoz} end
 	 
-      {AddExp} %add experience to the winnig pokemoz if one
+	 {AddExp} %add experience to the winnig pokemoz if one
 
-      Temp={CombatFinished} %ends the combat if one the trainers is defeated
-      if {IsKo Player} == true then {AutoSwitch} end %if the player pokemoz is ko then we need to switch
-      {Delay AutoDelay}
-      if OpponentType == 2 then 
-	 Random = {OS.rand} mod 10
-
-	 if Random == 5 then {AutoCapture} end
-      end
       
-      if Temp==false then {FightRoutine} end
+	 if {IsKo Player} == true then {AutoSwitch} end %if the player pokemoz is ko then we need to switch
+	 {Delay AutoDelay}
+	 Temp={CombatFinished} %ends the combat if one the trainers is defeated
+	 if OpponentType == 2 then 
+	    Random = {OS.rand} mod 10
+
+	    if Random == 5 then Captured={AutoCapture} 
+	    else Captured = false end
+	 else Captured = false
+	 end
+      
+	 if Temp==false andthen Captured == false then {FightRoutine} end
       end
    end
    
