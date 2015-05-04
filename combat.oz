@@ -219,19 +219,26 @@ define
    end
    
    proc{ActionSwitch}%when selecting the button "switch"
-      local Switched SwitchPokemoz X in
+      local Switched SwitchPokemoz X Tag in
+
+	 Tag = {Window.createNewTag}
+	 {Window.addFillLabelT "Switching pokemoz" Tag}
+	 
 	 %switch pokemoz
 	 [SwitchPokemoz] = {Module.link ['switch_pokemoz.ozf']}
 	 {SwitchPokemoz.initializeSwitchWindow Window Player}
 	 Switched = {SwitchPokemoz.displaySwitchWindow}
+
+
 	 %update the screen to display the new pokemoz
 	 {Send Player get(X)}
 	 {UpdateDisplayNamePokemoz true X.p1.t X.p1.n}
 	 {UpdateDisplayHpPokemoz true Player}
-	 {Browser.browse Switched}
-	 if Switched == 1 then
+	 if Switched == 1 then %if the player switch a pokemoz then the ia can attack
+	    {Window.cleanWindowT Tag}
 	    {IAReactionSwitch} %If you switch pokemoz then the IA reacts
 	 end
+	 {Window.cleanWindowT Tag}
 
 	 {AfterAttack}
 
