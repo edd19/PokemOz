@@ -98,10 +98,10 @@ define
 			else  State
 			end
 
-      []add(id:Id p:Pokemoz) then if id == 2 then trainer(c:State.c r:State.r isDefeated:State.isDefeated p1:State.p1 p2:Pokemoz p3:State.p3) %to add a pokemoz
-				  elseif id == 3 then trainer(c:State.c r:State.r isDefeated:State.isDefeated p1:State.p1 p2:State.p2 p3:Pokemoz)
-				  else State
-				  end
+      []add(Id Pokemoz) then if Id == 2 then trainer(c:State.c r:State.r isDefeated:State.isDefeated p1:State.p1 p2:Pokemoz p3:State.p3) %to add a pokemoz
+			     elseif Id == 3 then trainer(c:State.c r:State.r isDefeated:State.isDefeated p1:State.p1 p2:State.p2 p3:Pokemoz)
+			     else State
+			     end
 	 
       else State
       end

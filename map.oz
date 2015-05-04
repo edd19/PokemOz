@@ -4,7 +4,6 @@ functor
 import
    OS
    QTk at 'x-oz://system/wp/QTk.ozf'
-   Browser
    Application
    Module
    Pokemoz at 'list_pokemoz.ozf'
@@ -49,7 +48,12 @@ define
 
 
    proc{GameOver}%quit the game
-      {Application.exit 0}
+      local Font in
+	 Font = {QTk.newFont font(size:40)}
+	 {Canvas create(window (W div 2) (H div 2) window:message(init:"You lose" font:Font))}
+	 {Delay 500}
+	 {Application.exit 0}
+	 end
    end
 
 

@@ -5,6 +5,7 @@ import
    Module
    OS
    ListPokemoz at 'list_pokemoz.ozf'
+   Browser
 export
    CombatVSTrainer
    CombatVSWild
@@ -284,8 +285,8 @@ define
    fun{FindSpace} %return the empty space for the trainer
       local X in
 	 {Send Player get(X)}
-	 if X.p2 \= nil then 2
-	 elseif X.p3 \= nil then 3
+	 if X.p2 == nil then 2
+	 elseif X.p3 == nil then 3
 	 else 0
 	 end
       end
@@ -299,10 +300,10 @@ define
    end
    
    proc{AddPokemoz}%add pokemoz for the player
-      local Space Y in
+      local Space Y Z in
 	 Space = {FindSpace}
 	 if Space == 0 then {FullPokemozMessage} {Delay TimeDelay}
-	 else {Send Opponent get(Y)} {Send Player add(id:Space p:Y.p1)} 
+	 else {Send Opponent get(Y)} {Send Player add(Space Y.p1)} 
 	 end
       end
    end
@@ -310,7 +311,7 @@ define
    proc{ActionCapture}%when clicking on the button capture
       local Success  in
 	 Success = {CaptureSuccess}
-	 if Success == true then {MessageCapture true} {Delay TimeDelay} {AddPokemoz} {CleanWindowCombat} IsFinished=3
+	 if Success == true then {MessageCapture true} {AddPokemoz} {Delay TimeDelay} {CleanWindowCombat} IsFinished=3
 	 else {MessageCapture false}
 	 end
 	 {IAReactionAttack} %If you switch pokemoz then the IA reacts
