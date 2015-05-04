@@ -202,6 +202,7 @@ define
 			 Y1={Max {Min (NbLines-1)*TmpL {Float.toInt Coord.2.1}+({Equals ListMoves.Acc 3}-{Equals ListMoves.Acc 1})*TmpL} 0}
 			 if {CheckIfEmpty X1 Y1 ListTags} == true then %of there isn't already a trainer there then we create a shape at coord X1 Y1
 			    {H setCoords(X1 Y1 X1+TmpL Y1+TmpL)}
+			    {Send MoveManager combatia(X1 Y1)}
 			 end
 			 {Loop Acc+1 T}
 		      end
@@ -253,17 +254,50 @@ define
       end
    end
 
+   fun{RemoveNth List N}
+      fun{Loop List Acc}
+	 case List
+	 of H|T then if Acc == N then T
+		     else H|{Loop T Acc+1}
+		     end
+	 else nil
+	 end
+      end
+   in
+      {Loop List 1}
+   end
+
+   fun{FindByCoord X Y State}
+      fun{Loop List Acc}
+	 case List
+	 of H|T then if H.1 == X andthen H.2.1 == Y then Acc
+		     else {Loop T Acc+1}
+		     end
+	 else 0
+	 end
+      end
+   in
+      {Loop State 1}
+   end
+   
    fun{MessageProcess Msg State}
       case Msg
       of move(M) then {MoveTrainers M State.l} State
       [] get(B) then B = State.b State
-      []combat(X Y) then local Temp in
-			    Temp = {CheckIfCombat X Y State.l} 
-			    if Temp == 0 then State
-			    elseif Temp == 11 then {Browser.browse Temp} State
-			    else {LaunchCombatVsTrainer} State
-			    end
-			 end
+      []combatplayer(X Y) then local Temp in
+				  Temp = {CheckIfCombat X Y State.l} 
+				  if Temp == 0 then State
+				  elseif Temp == 11 then State 
+				  else {LaunchCombatVsTrainer} state(b:State.b l:{RemoveNth State.l Temp})
+				  end
+			       end
+			      
+      []combatia(X Y) then local Temp in
+			      Temp = {CheckIfCombat X Y State.l}
+			      if Temp == 0 then State
+			      elseif Temp == 11 then  {LaunchCombatVsTrainer}  state(b:State.b l:{RemoveNth State.l {FindByCoord X Y State.l}})
+			      else State end
+			   end
       else State
       end
    end
@@ -280,14 +314,11 @@ define
       MoveManager = {NewPort S}
       thread {Loop S state(b:true l:ListTags)} end
    end
-
-
   
-
    proc{MovePlayer X Y } %move the player and check if a combat happens
       {Tag delete}
       {CreateRectangle X Y}
-      {Send MoveManager combat(X Y)}
+      {Send MoveManager combatplayer(X Y)}
    end
 
    proc{CreateRectangle X Y}	%procedure that creates a player rectangle and moves it

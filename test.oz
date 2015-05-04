@@ -6,7 +6,7 @@ declare
 
 Temp1={Pokemoz.createPokemOz 5}
 Temp2={Pokemoz.createPokemOz 5}
-T1 = trainer(c:({OS.rand} mod 7)+1 r:({OS.rand} mod 7)+1 isDefeated:false p1:Temp1 p2:nil p3:nil)
+T1 = trainer(c:({OS.rand} mod 7)+1 r:({OS.rand} mod 7)+1 isDefeated:false p1:Temp1 p2:Temp2 p3:nil)
 T2 = trainer(c:({OS.rand} mod 7)+1 r:({OS.rand} mod 7)+1 isDefeated:false p1:Temp2 p2:nil p3:nil)
 P O
 P = {Agent.newIA T1 1} %"port contenant le premier joueur"
