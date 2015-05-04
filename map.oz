@@ -10,33 +10,38 @@ import
    Pokemoz at 'list_pokemoz.ozf'
 export
    MapScreen
+   InitializeMyMap
+   W
    
 define
 
-   Map = map(r(1 1 1 0 0 0 0) %map of the game
-	     r(1 1 1 0 0 1 1)
-	     r(1 1 1 0 0 1 1)
-	     r(0 0 0 0 0 1 1)
-	     r(0 0 0 1 1 1 1)
-	     r(0 0 0 1 1 0 0)
-	     r(0 0 0 0 0 0 0))
-
+   Map
    Canvas
-   % A AJUSTER EN FONCTION DE LA TAILLE DE LA MAP
-   W=700	%width of the map
-   H=700	%height of the map
-   NbLines = 7 % number of rows and columns
    TmpL = 100 %height (and width) of a box
-   
-   
-   Desc = td(canvas(bg:white	%create a canvas representing the map
-		    width:W
-		    height:H
-		    handle:Canvas))
-   Window={QTk.build Desc}
+   W          %width of the map
+   H          %height of the map
+   NbLines    % number of rows and columns. 
 
+   Desc
+   Window
+   
+   proc{DispW}
+      Desc = td(canvas(bg:white	%create a canvas representing the map
+		       width:W
+		       height:H
+		       handle:Canvas))
+      Window={QTk.build Desc}
+   end
+   %Initialize Map NbLines W and H
+   proc {InitializeMyMap ImportedMap NbRows NbCols}
+      W=TmpL*NbRows
+      H=TmpL*NbCols
+      Map=ImportedMap
+      NbLines=NbRows  
+   end
+   
    ListTags %list of rectangles representing the trainer
-   Tag
+   Tag % TagPlayer
 
    MoveManager %a port for mananging the movements of the trainers
 
@@ -132,7 +137,7 @@ define
 	 {GenerateGrid ActL-TmpL}
       end
    end
-%%%%%%%%
+
    proc {GenerateGameMap M} %colored the case if needed (green for grass for example)
       for I in 1..NbLines do %TODO boucle recusif
 	 for J in 1..NbLines do
@@ -142,14 +147,13 @@ define
 	 end
       end
    end
-%%%%%%%%%
       
    proc {CheckInGrass X Y Ret}
 
 	    if Map.((Y div TmpL)+1).((X div TmpL)+1)==1 then Ret=true else Ret=false end % PE +1
       
    end
-%%%%%%%
+
    fun{CheckIfEmpty X1 Y1 List} %check if this case doesn't contain an element
       fun{Loop ListTags}
 	 case ListTags
@@ -327,6 +331,7 @@ define
   
    proc{MovePlayer X Y} %move the player and check if a combat happens
       {Tag delete}
+      {Tag setCoords(X Y X+TmpL Y+TmpL)}
       {CreateRectangle X Y}
       {Send MoveManager combatplayer(X Y)}
 
@@ -356,13 +361,18 @@ define
   
    proc{MapScreen P} %draw the map on the screen and launch the movement of the trainers
       Player = P
+      {DispW}
       {Window show}
 
       {GenerateGrid H}
       {GenerateGameMap Map}
 
       Tag={Canvas newTag($)}
-      {CreateRectangle (NbLines-1)*TmpL 0}
+      %
+     % {Canvas create(rect (NbLines-1)*TmpL 0 ((NbLines-1)*TmpL)+TmpL TmpL fill:blue tags:Tag)}
+       %
+		     
+     {CreateRectangle (NbLines-1)*TmpL 0}
       
       ListTags = {InitRectangles}
 
