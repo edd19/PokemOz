@@ -33,6 +33,7 @@ define
    Window={QTk.build Desc}
 
    ListTags %list of rectangles representing the trainer
+   Tag
 
    MoveManager %a port for mananging the movements of the trainers
    proc{GenerateGrid ActL} %generate the grid for the map that 
@@ -111,8 +112,9 @@ define
 			 {H getCoords(Coord)}
 			 X1={Max {Min (NbLines-1)*TmpL {Float.toInt Coord.1}+({Equals ListMoves.Acc 2}-{Equals ListMoves.Acc 4})*TmpL} 0} %generates new coordinates depending of the movement
 			 Y1={Max {Min (NbLines-1)*TmpL {Float.toInt Coord.2.1}+({Equals ListMoves.Acc 3}-{Equals ListMoves.Acc 1})*TmpL} 0}
-			    
-			 {H setCoords(X1 Y1 X1+TmpL Y1+TmpL)}
+			 if {CheckIfEmpty X1 Y1 ListTags} == true then %of there isn't already a trainer there then we create a shape at coord X1 Y1
+			    {H setCoords(X1 Y1 X1+TmpL Y1+TmpL)}
+			 end
 			 {Loop Acc+1 T}
 		      end
 	 else skip
@@ -155,6 +157,20 @@ define
       MoveManager = {NewPort S}
       thread {Loop S state(b:true l:ListTags)} end
    end
+
+
+   proc{CreateRectangle X Y ListTrainers}	%procedure that creates a player rectangle and moves it
+     
+      {Canvas create(rect X Y X+TmpL Y+TmpL fill:blue tags:Tag)} 
+
+      {Window bind(event:"<Up>" action:proc{$} {Tag delete} {CreateRectangle X {Max 0 Y-TmpL} ListTrainers } end)}
+      %move the rectangle by deleting the current one
+      {Window bind(event:"<Down>" action:proc{$} {Tag delete} {CreateRectangle X {Min H-TmpL Y+TmpL} ListTrainers} end)}
+      % and creating a new one in the direction indicated
+      {Window bind(event:"<Left>" action:proc{$} {Tag delete} {CreateRectangle {Max 0 X-TmpL} Y ListTrainers} end)}
+      {Window bind(event:"<Right>" action:proc{$} {Tag delete} {CreateRectangle {Min H-TmpL X+TmpL} Y ListTrainers} end)}
+      
+   end
   
    proc{MapScreen}%draw the map on the screen and launch the movement of the trainers
       {Window show}
@@ -164,7 +180,9 @@ define
       ListTags = {InitRectangles}
 
       {NewMoveManager}
-
+      Tag={Canvas newTag($)}
+      {CreateRectangle (NbLines-1)*TmpL 0 nil}
+      
       {RandomMoves}
       
    end
