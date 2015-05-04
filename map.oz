@@ -6,6 +6,8 @@ import
    QTk at 'x-oz://system/wp/QTk.ozf'
    Browser
    Application
+   Module
+   Pokemoz at 'list_pokemoz.ozf'
 export
    MapScreen
    
@@ -38,6 +40,7 @@ define
 
    MoveManager %a port for mananging the movements of the trainers
 
+   Player %port for the player trainer
 
 
    proc{GameOver}%quit the game
@@ -54,22 +57,22 @@ define
    fun{IsAttackedByWild}%return true if a wild pokemoz attack the player, false otherwise
       local Probability in
 	 Probability = {OS.rand} mod 3
-	 if Probability = 1 then true
+	 if Probability == 1 then true
 	 else false end
       end
    end
 
    fun{CreateTrainer Number}%create a trainer where Number is the number of pokemoz that the trainer have and Lx is the level of the player
       fun{Loop N R Init}
-	 local Pokemoz X in
+	 local P X in
 	    {Send Player get(X)}
-	    Pokemoz = {Pokemoz.createPokemOz X.p1.lx}%generates a pokemoz
-	    if R == 1 then {Loop N R+1 trainer(c:0 r:0 isDefeated:false p1:Pokemoz p2:nil p3:nil)}
+	    P = {Pokemoz.createPokemOz X.p1.lx}%generates a pokemoz
+	    if R == 1 then {Loop N R+1 trainer(c:0 r:0 isDefeated:false p1:P p2:nil p3:nil)}
 	    elseif R == 2 then if R > N then Init
-			       else  {Loop N R+1 trainer(c:0 r:0 isDefeated:false p1:Init.p1 p2:Pokemoz p3:nil)}
+			       else  {Loop N R+1 trainer(c:0 r:0 isDefeated:false p1:Init.p1 p2:P p3:nil)}
 			       end
 	    elseif R==3 then if R > N then Init
-			     else   {Loop N R+1 trainer(c:0 r:0 isDefeated:false p1:Init.p1 p2:Init.p2 p3:Pokemoz)}
+			     else   {Loop N R+1 trainer(c:0 r:0 isDefeated:false p1:Init.p1 p2:Init.p2 p3:P)}
 			     end
 	    else Init
 	    end
@@ -90,7 +93,7 @@ define
 	 Trainer = {CreateTrainer 1} 
 	 Opponent = {Agent.newIA Trainer 1}
 
-	 {Combat.initializeCombat Window}
+	 {Combat.initializeCombatWindow Window}
 	 ResultCombat = {Combat.combatVSWild Player Opponent}
 	 {AfterCombat ResultCombat}
       end
@@ -114,7 +117,7 @@ define
 	 Trainer = {CreateTrainer Number} 
 	 Opponent = {Agent.newIA Trainer 1}
 
-	 {Combat.initializeCombat Window}
+	 {Combat.initializeCombatWindow Window}
 	 ResultCombat = {Combat.combatVSTrainer Player Opponent}
 	 {AfterCombat ResultCombat}
       end
@@ -258,7 +261,7 @@ define
 			    Temp = {CheckIfCombat X Y State.l} 
 			    if Temp == 0 then State
 			    elseif Temp == 11 then {Browser.browse Temp} State
-			    else {Browser.browse Temp}  State
+			    else {LaunchCombatVsTrainer} State
 			    end
 			 end
       else State
@@ -300,7 +303,8 @@ define
       
    end
   
-   proc{MapScreen}%draw the map on the screen and launch the movement of the trainers
+   proc{MapScreen P} %draw the map on the screen and launch the movement of the trainers
+      Player = P
       {Window show}
 
       {GenerateGrid H}

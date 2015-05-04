@@ -10,5 +10,6 @@ all:
 	$(CC) $(CFLAGS) select_starter.oz
 	$(CC) $(CFLAGS) combat.oz
 	$(CC) $(CFLAGS) switch_pokemoz.oz
+	$(CC) $(CFLAGS) map.oz
 clean:
 	rm *.ozf
