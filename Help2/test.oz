@@ -13,7 +13,6 @@ P = {Agent.newIA T1 1} %"port contenant le premier joueur"
 
 O = {Agent.newIA T2 2} %"port contenant le second joueur"
 XM
-PM={Map.newMap}
 
 
 
