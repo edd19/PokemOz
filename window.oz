@@ -29,6 +29,7 @@ define
    Window
    Width = 600 %Width of the window
    Height = 600 %Height of the window
+   Font = {QTk.newFont font(size:20)}
    
    proc{CreateWindow} %Creates a window (white by default)
       Desc = td(canvas(width:Width
@@ -56,7 +57,7 @@ define
    proc{AddText X Y Msg} %Add text on the window
       %Add the text so that the top-center of it is situated at point (X,Y)
       %Msg is the text to be displayed
-      {Canvas create(text X Y text:Msg anchor:n tags:Tag)}
+      {Canvas create(text X Y text:Msg anchor:n tags:Tag font:Font)}
    end
 
    proc{AddButton X Y Desc} %Add a button on the window
@@ -81,7 +82,7 @@ define
       %Add the message so that the center of it is placed at point (X,Y)
       %Msg is the text to be written on the screen.
       local Handle in
-	 {Canvas create(window X Y window:message(init:Msg handle:Handle) tags:Tag)}
+	 {Canvas create(window X Y window:message(init:Msg handle:Handle font:Font) tags:Tag)}
 	 Handle %return the handle to change the text on screen if needed
       end
    end
@@ -90,7 +91,7 @@ define
       %Add the message so that the center of it is placed at point (X,Y)
       %Msg is the text to be written on the screen.
       local Handle in
-	 {Canvas create(window X Y window:message(init:Msg bg:Color handle:Handle) tags:Tag)}
+	 {Canvas create(window X Y window:message(init:Msg bg:Color handle:Handle font:Font) tags:Tag)}
 	 Handle %return the handle to change the text on screen if needed
       end
    end
@@ -114,7 +115,7 @@ define
       %Add the message so that the center of it is placed at point (X,Y)
       %Msg is the text to be written on the screen.
       local Handle in
-	 {Canvas create(window X Y window:message(init:Msg bg:Color handle:Handle) tags:NewTag)}
+	 {Canvas create(window X Y window:message(init:Msg bg:Color handle:Handle font:Font) tags:NewTag)}
 	 Handle %return the handle to change the text on screen if needed
       end
    end
