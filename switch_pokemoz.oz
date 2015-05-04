@@ -23,6 +23,7 @@ define
 
    proc{CleanWindow} %clean the window so that it becomes blank
       {Window.cleanWindowT Tag}
+      {Window.closeWindow}
    end
 
    proc{DisplayActualPokemoz Pokemoz}%display the pokemoz that is in combat

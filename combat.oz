@@ -128,6 +128,7 @@ define
 
    proc{CleanWindowCombat} %destroy all elements on the window (blank screen)
       {Window.cleanWindow}
+      {Window.closeWindow}
    end
    
    fun{CombatFinished} %check if the combat is finished

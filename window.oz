@@ -7,6 +7,7 @@ export
    CreateWindow
    ShowWindow
    CleanWindow
+   CloseWindow
    AddText
    AddButton
    AddRadioButton
@@ -41,6 +42,10 @@ define
 
    proc{ShowWindow} %Swho the window created
       {Window show}
+   end
+
+   proc{CloseWindow}
+      {Window close}
    end
 
    proc{CleanWindow} %delete all elements in the window
