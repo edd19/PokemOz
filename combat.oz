@@ -128,6 +128,7 @@ define
 
    proc{CleanWindowCombat} %destroy all elements on the window (blank screen)
       {Window.cleanWindow}
+      {Window.closeWindow}
    end
    
    fun{CombatFinished} %check if the combat is finished
@@ -219,19 +220,28 @@ define
    end
    
    proc{ActionSwitch}%when selecting the button "switch"
-      local Switched SwitchPokemoz X in
+      local Switched SwitchPokemoz X Tag in
+
+	 Tag = {Window.createNewTag}
+	 {Window.addFillLabelT "Switching pokemoz" Tag}
+	 
 	 %switch pokemoz
 	 [SwitchPokemoz] = {Module.link ['switch_pokemoz.ozf']}
 	 {SwitchPokemoz.initializeSwitchWindow Window Player}
 	 Switched = {SwitchPokemoz.displaySwitchWindow}
+
+
 	 %update the screen to display the new pokemoz
-	 {Send Player get(X)}
-	 {UpdateDisplayNamePokemoz true X.p1.t X.p1.n}
-	 {UpdateDisplayHpPokemoz true Player}
 	 {Browser.browse Switched}
-	 if Switched == 1 then
+	 if Switched == 1 then %if the player switch a pokemoz then the ia can attack
+	    {Send Player get(X)}
+	    {UpdateDisplayNamePokemoz true X.p1.t X.p1.n}
+	    {UpdateDisplayHpPokemoz true Player}
+	    {Window.cleanWindowT Tag}
 	    {IAReactionSwitch} %If you switch pokemoz then the IA reacts
 	 end
+
+	 {Window.cleanWindowT Tag}
 
 	 {AfterAttack}
 
@@ -249,7 +259,7 @@ define
    end
    
    proc{ActionFlee}
-      if OpponentType == 2 then {MessageFlee true} {Delay TimeDelay} {Window.cleanWindow} IsFinished=2 end
+      if OpponentType == 2 then {MessageFlee true} {Delay TimeDelay} {CleanWindowCombat}{ IsFinished=2 end
    end
 
    fun{CaptureSuccess} %return true if the capture succeeded, else false
@@ -302,7 +312,7 @@ define
    proc{ActionCapture}%when clicking on the button capture
       local Success  in
 	 Success = {CaptureSuccess}
-	 if Success == true then {MessageCapture true} {Delay TimeDelay} {AddPokemoz} {Window.cleanWindow} IsFinished=3
+	 if Success == true then {MessageCapture true} {Delay TimeDelay} {AddPokemoz} {CleanWindowCombat} IsFinished=3
 	 else {MessageCapture false}
 	 end
 	 {IAReactionAttack} %If you switch pokemoz then the IA reacts

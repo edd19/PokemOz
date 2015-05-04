@@ -3,6 +3,7 @@ functor
 import
    ListPokemoz at 'list_pokemoz.ozf'
    Browser
+   Window at 'window.ozf'
 export
    InitializeSwitchWindow
    DisplaySwitchWindow
@@ -14,13 +15,15 @@ define
    Tag
    
    proc{InitializeSwitchWindow W P}%intialize the variables for the functor
-      Window = W      
+      {Window.createWindow}
+      {Window.showWindow}
       Player = P
       Tag = {Window.createNewTag}
    end
 
-   proc{CleanWindow} %clean the window so that the it becomes blank
+   proc{CleanWindow} %clean the window so that it becomes blank
       {Window.cleanWindowT Tag}
+      {Window.closeWindow}
    end
 
    proc{DisplayActualPokemoz Pokemoz}%display the pokemoz that is in combat
@@ -56,13 +59,13 @@ define
       end
    end
    
-   proc {DisplayButtonPokemoz Pokemoz Id}%display the button for choosing a pokemoz, id is there to indicate the which pokemoz
+   proc {DisplayButtonPokemoz Pokemoz Id}%display the button for choosing a pokemoz, id is there to indicate which pokemoz
       if Pokemoz \= nil then local Desc Color Text in
 				Color = {ListPokemoz.colorByType Pokemoz.t}
 				Text=Pokemoz.n
-				Desc=button(text:Text bg:Color action:proc{$} {ActionButtonSwitch Id} end)
+				Desc=button(text:Text bg:Color action:proc{$} {Browser.browse Text} {ActionButtonSwitch Id} end)
 				{Window.addButtonT ({Window.getWidth} div 6)*3 ({Window.getHeight} div 6)*Id Desc Tag}
-			      end
+			     end
       end
    end
    
@@ -87,13 +90,12 @@ define
    fun {DisplaySwitchWindow}%display the switch window with all the elements
       local X IsKo in
 	 {Send Player get(X)}
-	 {Window.addFillLabelT "Choose a pokemoz" Tag}
+	 
 	 {DisplayActualPokemoz X.p1} %display the pokemoz that is currently fighting
 	 {DisplayOtherPokemoz X.p2 X.p3}%display the other pokemoz that can be switched with
 
 	 IsKo = {CheckIfKO 1} %has to switch if the first pokemoz is KO
 	 if IsKo == false then {DisplayReturnButton} end %display the return button if the trainer don't want to switch pokemoz finally end
-	 {Browser.browse Finish}
 	 Finish %return 1 if the trainer switched pokemoz and 0 otherwise
       end
    end
