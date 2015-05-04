@@ -24,7 +24,7 @@ define
    W=700	%width of the map
    H=700	%height of the map
    NbLines = 7 % number of rows and columns
-   BoxWidth = 100 %height (and width) of a box
+   TmpL = 100 %height (and width) of a box
    
    Desc = td(canvas(bg:white	%create a canvas representing the map
 		    width:W
@@ -32,9 +32,18 @@ define
 		    handle:Canvas))
    Window={QTk.build Desc}
    
-  
+  proc{GenerateGrid ActL} %generate the grid for the map that 
+      if ActL=<0 then skip 
+      else
+	 {Canvas create(line 0 ActL W ActL)}
+	 {Canvas create(line ActL 0 ActL H)}
+	 {GenerateGrid ActL-TmpL}
+      end
+   end
    
    proc{MapScreen}%draw the map on the screen and launch the movement of the trainers
       {Window show}
+
+      {GenerateGrid H}
    end
 end
