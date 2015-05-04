@@ -2,7 +2,6 @@
 functor
 import
    ListPokemoz at 'list_pokemoz.ozf'
-   Browser
    Window at 'window.ozf'
 export
    InitializeSwitchWindow
@@ -63,7 +62,7 @@ define
       if Pokemoz \= nil then local Desc Color Text in
 				Color = {ListPokemoz.colorByType Pokemoz.t}
 				Text=Pokemoz.n
-				Desc=button(text:Text bg:Color action:proc{$} {Browser.browse Text} {ActionButtonSwitch Id} end)
+				Desc=button(text:Text bg:Color action:proc{$}  {ActionButtonSwitch Id} end)
 				{Window.addButtonT ({Window.getWidth} div 6)*3 ({Window.getHeight} div 6)*Id Desc Tag}
 			     end
       end

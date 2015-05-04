@@ -269,7 +269,7 @@ define
    fun{RemoveNth List N}
       fun{Loop List Acc}
 	 case List
-	 of H|T then if Acc == N then T
+	 of H|T then if Acc == N then {H delete} T
 		     else H|{Loop T Acc+1}
 		     end
 	 else nil
@@ -341,7 +341,6 @@ define
 	    
 	    local Ret in
 	       {CheckInGrass X Y Ret}
-	       {Browser.browse Ret}
 	       if Ret==true then {Send MoveManager combatgrass(X Y)}
 	       else
 		  skip

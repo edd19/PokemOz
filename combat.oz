@@ -5,7 +5,6 @@ import
    Module
    OS
    ListPokemoz at 'list_pokemoz.ozf'
-   Browser
 export
    CombatVSTrainer
    CombatVSWild
@@ -232,7 +231,6 @@ define
 
 
 	 %update the screen to display the new pokemoz
-	 {Browser.browse Switched}
 	 if Switched == 1 then %if the player switch a pokemoz then the ia can attack
 	    {Send Player get(X)}
 	    {UpdateDisplayNamePokemoz true X.p1.t X.p1.n}
