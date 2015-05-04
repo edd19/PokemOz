@@ -231,13 +231,15 @@ define
 
 
 	 %update the screen to display the new pokemoz
-	 {Send Player get(X)}
-	 {UpdateDisplayNamePokemoz true X.p1.t X.p1.n}
-	 {UpdateDisplayHpPokemoz true Player}
+	 {Browser.browse Switched}
 	 if Switched == 1 then %if the player switch a pokemoz then the ia can attack
+	    {Send Player get(X)}
+	    {UpdateDisplayNamePokemoz true X.p1.t X.p1.n}
+	    {UpdateDisplayHpPokemoz true Player}
 	    {Window.cleanWindowT Tag}
 	    {IAReactionSwitch} %If you switch pokemoz then the IA reacts
 	 end
+
 	 {Window.cleanWindowT Tag}
 
 	 {AfterAttack}
