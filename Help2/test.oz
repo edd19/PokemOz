@@ -34,12 +34,5 @@ Y
 
 Z
 
-%thread {Browse T}
- %  {Wait T}
-   {Send O get(X)}
-   {Send P get(Y)}
-   {Browse X}
-   {Browse Y}
-%end
 
 

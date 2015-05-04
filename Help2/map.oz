@@ -25,6 +25,7 @@ define
    NbLines = 7 % number of rows and columns
    TmpL = 100 %height (and width) of a box
    
+   
    Desc = td(canvas(bg:white	%create a canvas representing the map
 		    width:W
 		    height:H
@@ -32,7 +33,8 @@ define
    Window={QTk.build Desc}
 
    ListTags %list of rectangles representing the trainer
-   
+
+   MoveManager %a port for mananging the movements of the trainers
    proc{GenerateGrid ActL} %generate the grid for the map that 
       if ActL=<0 then skip 
       else
@@ -93,7 +95,7 @@ define
    end
 
 
-    fun{Equals A B} %return 1 if the two elements are equals and 0 otherwise
+   fun{Equals A B} %return 1 if the two elements are equals and 0 otherwise
       if A==B then 1
       else 0
       end
@@ -120,9 +122,38 @@ define
       {Loop 1 ListTags}
    end
 
-   fun{RandomMoves} %generates random moves 
-      listMoves(player:0 1:({OS.rand} mod 10) 2:({OS.rand} mod 10) 3:({OS.rand} mod 10) 4:({OS.rand} mod 10) 5:({OS.rand} mod 10) 6:({OS.rand} mod 10)
-		7:({OS.rand} mod 10) 8:({OS.rand} mod 10) 9:({OS.rand} mod 10) 10:({OS.rand} mod 10))
+   proc{RandomMoves} %generates random moves
+      local Move in
+	 {Send MoveManager get(Move)}
+	 if Move == true then 
+	    {Send MoveManager move(listMoves(player:0 1:({OS.rand} mod 10) 2:({OS.rand} mod 10) 3:({OS.rand} mod 10) 4:({OS.rand} mod 10) 5:({OS.rand} mod 10) 6:({OS.rand} mod 10)
+				 7:({OS.rand} mod 10) 8:({OS.rand} mod 10) 9:({OS.rand} mod 10) 10:({OS.rand} mod 10)))}
+	 end
+
+	 {Delay 500}
+	 {RandomMoves}
+      end
+   end
+
+   fun{MessageProcess Msg State}
+      case Msg
+      of move(M) then {MoveTrainers M State.l} State
+      [] get(B) then B = State.b State
+      else State
+      end
+   end
+   
+   proc{NewMoveManager}%creates a new move manager
+      proc{Loop S State}
+	 case S
+	 of  H|T then
+	    {Loop T {MessageProcess H State}}
+	 end
+      end
+      S
+   in
+      MoveManager = {NewPort S}
+      thread {Loop S state(b:true l:ListTags)} end
    end
   
    proc{MapScreen}%draw the map on the screen and launch the movement of the trainers
@@ -132,11 +163,9 @@ define
       {GenerateGameMap Map}
       ListTags = {InitRectangles}
 
-      {Delay 2000}
+      {NewMoveManager}
 
-      {MoveTrainers {RandomMoves} ListTags}
-      
-
+      {RandomMoves}
       
    end
 end
