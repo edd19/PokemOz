@@ -91,9 +91,9 @@ define
       end
    end
 
-   proc{AddCheckButton X Y Text R}
+   proc{AddCheckButton X Y Desc}
       {Canvas create(window X Y
-		     window:checkbutton(text:Text init:false  return:R))}
+		     window:Desc)}
    end
    
    fun{AddColoredMessage X Y Msg Color}%Add a message on the window and return the handle of the newly created label
@@ -105,9 +105,9 @@ define
       end
    end
 
-   proc{AddNumberEntry X Y Min Max R}
+   proc{AddNumberEntry X Y Desc}
       {Canvas create(window X Y
-		     window:numberentry(min:Min max:Max init:0 return:R))}
+		     window:Desc)}
    end
 
    proc{ChangeMessageText Handle NewMsg}%Change the label text by the new one (NewMsg)

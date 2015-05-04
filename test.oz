@@ -9,7 +9,11 @@ declare
 
 {Parameters.parametersScreen}
 
-{Browse Parameters.autofight}
+Auto = Parameters.autofight
+Prob = Parameters.probability
+Speed = Parameters.speed
+
+if Speed ==0 then skip end
 
 Select = {SelectStarter.selectionScreen} %choose a pokemoz for starter
 Player = SelectStarter.player %create a player port depending of the choice for starter pokemoz
@@ -18,7 +22,7 @@ Player = SelectStarter.player %create a player port depending of the choice for 
 
 {Map.initializeMyMap @(MapCreator.theMap) @(MapCreator.nbRows) @(MapCreator.nbCols)}
 
-{Map.mapScreen Player true}%show the map
+{Map.mapScreen Player Auto Prob Speed}%show the map
 
 
 

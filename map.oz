@@ -24,6 +24,8 @@ define
    Desc
    Window
    Auto
+   Probability
+   Speed
    
    proc{DispW}
       Desc = td(canvas(bg:white	%create a canvas representing the map
@@ -423,9 +425,11 @@ define
       thread {Loop (NbLines-1)*TmpL (NbLines-1)*TmpL} end
    end
   
-   proc{MapScreen P A} %draw the map on the screen and launch the movement of the trainers
+   proc{MapScreen P A Prob S} %draw the map on the screen and launch the movement of the trainers
       Player = P
       Auto = A
+      Speed = S
+      Probability = Prob
       {DispW}
       {Window show}
 
