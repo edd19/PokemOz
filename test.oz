@@ -5,6 +5,11 @@ declare
 [Map]= {Module.link ['map.ozf']}
 [MapCreator] = {Module.link['MapCreator.ozf']}
 [SelectStarter] = {Module.link ['select_starter.ozf']}
+[Parameters] = {Module.link ['parameters.ozf']}
+
+{Parameters.parametersScreen}
+
+{Browse Parameters.autofight}
 
 Select = {SelectStarter.selectionScreen} %choose a pokemoz for starter
 Player = SelectStarter.player %create a player port depending of the choice for starter pokemoz

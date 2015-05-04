@@ -12,5 +12,6 @@ all:
 	$(CC) $(CFLAGS) switch_pokemoz.oz
 	$(CC) $(CFLAGS) map.oz
 	$(CC) $(CFLAGS) MapCreator.oz
+	$(CC) $(CFLAGS) parameters.oz
 clean:
 	rm *.ozf

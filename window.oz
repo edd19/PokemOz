@@ -13,6 +13,8 @@ export
    AddRadioButton
    AddGrid
    AddMessage
+   AddNumberEntry
+   AddCheckButton
    AddColoredMessage
    ChangeMessageText
    ChangeMessageColor
@@ -23,6 +25,8 @@ export
    CleanWindowT
    GetWidth
    GetHeight
+	Width	
+	Height
 define
    Canvas %Handler of the window
    Tag %tag for all elements created in the window
@@ -87,6 +91,11 @@ define
       end
    end
 
+   proc{AddCheckButton X Y Text R}
+      {Canvas create(window X Y
+		     window:checkbutton(text:Text init:false  return:R))}
+   end
+   
    fun{AddColoredMessage X Y Msg Color}%Add a message on the window and return the handle of the newly created label
       %Add the message so that the center of it is placed at point (X,Y)
       %Msg is the text to be written on the screen.
@@ -94,6 +103,11 @@ define
 	 {Canvas create(window X Y window:message(init:Msg bg:Color handle:Handle font:Font) tags:Tag)}
 	 Handle %return the handle to change the text on screen if needed
       end
+   end
+
+   proc{AddNumberEntry X Y Min Max R}
+      {Canvas create(window X Y
+		     window:numberentry(min:Min max:Max init:0 return:R))}
    end
 
    proc{ChangeMessageText Handle NewMsg}%Change the label text by the new one (NewMsg)
