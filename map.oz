@@ -330,24 +330,31 @@ define
    end
   
    proc{MovePlayer X Y} %move the player and check if a combat happens
-      {Tag delete}
-      {Tag setCoords(X Y X+TmpL Y+TmpL)}
-      {CreateRectangle X Y}
-      {Send MoveManager combatplayer(X Y)}
-
-      local Ret in
-	 {CheckInGrass X Y Ret}
-	 {Browser.browse Ret}
-	 if Ret==true then {Send MoveManager combatgrass(X Y)}
-	 else
-	    skip
+      local Var in
+	 {Send MoveManager get(Var)}
+	 if Var==true then
+	    
+	    {Tag delete}
+	    {Tag setCoords(X Y X+TmpL Y+TmpL)}
+	    {CreateRectangle X Y}
+	    {Send MoveManager combatplayer(X Y)}
+	    
+	    local Ret in
+	       {CheckInGrass X Y Ret}
+	       {Browser.browse Ret}
+	       if Ret==true then {Send MoveManager combatgrass(X Y)}
+	       else
+		  skip
+	       end
+	    end
+	    
 	 end
       end
-      
    end
+      
 
    proc{CreateRectangle X Y}	%procedure that creates a player rectangle and moves it
-     
+   
       {Canvas create(rect X Y X+TmpL Y+TmpL fill:blue tags:Tag)} 
 
       {Window bind(event:"<Up>" action:proc{$}  {MovePlayer X {Max 0 Y-TmpL}} end)}
