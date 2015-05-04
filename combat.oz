@@ -259,7 +259,7 @@ define
    end
    
    proc{ActionFlee}
-      if OpponentType == 2 then {MessageFlee true} {Delay TimeDelay} {Window.cleanWindow} IsFinished=2 end
+      if OpponentType == 2 then {MessageFlee true} {Delay TimeDelay} {CleanWindowCombat}{ IsFinished=2 end
    end
 
    fun{CaptureSuccess} %return true if the capture succeeded, else false
