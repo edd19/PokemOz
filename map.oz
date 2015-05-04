@@ -67,9 +67,9 @@ define
    end
 
    fun{IsAttackedByWild}%return true if a wild pokemoz attack the player, false otherwise
-      local Probability in
-	 Probability = {OS.rand} mod 3
-	 if Probability == 1 then true
+      local Prob in
+	 Prob = {OS.rand} mod 100
+	 if Prob < Probability then true
 	 else false end
       end
    end
@@ -415,7 +415,7 @@ define
 
    proc {AutoGame}
       proc {Loop X Y}
-	 {Delay 300}
+	 {Delay (10-Speed)*200}
 	 {AutoPlayer X Y-TmpL}
 	 
 	 {Loop X Y-TmpL}

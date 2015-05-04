@@ -2,7 +2,6 @@ functor
 
 import
    Window at 'window.ozf'
-   Browser
 export
    Probability
    Speed
@@ -76,6 +75,7 @@ define
       ProbP = {NewAgent}
       SpeedP = {NewAgent}
       AutoP = {NewAgent}
+      {Send AutoP set(false)}
       {ShowSpeed}
       {ShowAuto}
       {ShowProbability}
