@@ -332,7 +332,21 @@ define
       MoveManager = {NewPort S}
       thread {Loop S state(b:true l:ListTags)} end
    end
-  
+
+   proc {Victory}
+      local Font in
+	 Font = {QTk.newFont font(size:40)}
+	 {Canvas create(window (W div 2) (H div 2) window:message(init:"You win" font:Font))}
+	 {Delay 500}
+	 {Application.exit 0}
+	 end
+   end
+   
+   
+   proc{CheckIfWin X Y}%check if the player wins the game
+      if X == (NbLines-1)*TmpL andthen Y == 0 then {Victory} end
+   end
+   
    proc{MovePlayer X Y} %move the player and check if a combat happens
       local Var in
 	 {Send MoveManager get(Var)}
@@ -341,6 +355,7 @@ define
 	    {Tag delete}
 	    {Tag setCoords(X Y X+TmpL Y+TmpL)}
 	    {CreateRectangle X Y}
+	    {CheckIfWin X Y}
 	    {Send MoveManager combatplayer(X Y)}
 	    
 	    local Ret in
@@ -382,7 +397,7 @@ define
      % {Canvas create(rect (NbLines-1)*TmpL 0 ((NbLines-1)*TmpL)+TmpL TmpL fill:blue tags:Tag)}
        %
 		     
-     {CreateRectangle (NbLines-1)*TmpL 0}
+     {CreateRectangle (NbLines-1)*TmpL (NbLines-1)*TmpL}
       
       ListTags = {InitRectangles}
 
