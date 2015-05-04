@@ -110,6 +110,7 @@ define
 	 [Combat] = {Module.link ['combat.ozf']} %load the module for the combat
 	 [Agent] = {Module.link ['agent.ozf']} %load the module for the agent creation
 	 [Window] = {Module.link ['window.ozf']} %load the module for the combat
+	 
 	 {Window.createWindow}
 	 {Window.showWindow}
 
@@ -131,7 +132,7 @@ define
 	 {GenerateGrid ActL-TmpL}
       end
    end
-
+%%%%%%%%
    proc {GenerateGameMap M} %colored the case if needed (green for grass for example)
       for I in 1..NbLines do %TODO boucle recusif
 	 for J in 1..NbLines do
@@ -141,7 +142,14 @@ define
 	 end
       end
    end
+%%%%%%%%%
+      
+   proc {CheckInGrass X Y Ret}
 
+	    if Map.((Y div TmpL)+1).((X div TmpL)+1)==1 then Ret=true else Ret=false end % PE +1
+      
+   end
+%%%%%%%
    fun{CheckIfEmpty X1 Y1 List} %check if this case doesn't contain an element
       fun{Loop ListTags}
 	 case ListTags
@@ -298,6 +306,8 @@ define
 			      elseif Temp == 11 then  {LaunchCombatVsTrainer}  state(b:State.b l:{RemoveNth State.l {FindByCoord X Y State.l}})
 			      else State end
 			   end
+      []combatgrass(X Y) then {InGrass} State
+	 
       else State
       end
    end
@@ -315,10 +325,20 @@ define
       thread {Loop S state(b:true l:ListTags)} end
    end
   
-   proc{MovePlayer X Y } %move the player and check if a combat happens
+   proc{MovePlayer X Y} %move the player and check if a combat happens
       {Tag delete}
       {CreateRectangle X Y}
       {Send MoveManager combatplayer(X Y)}
+
+      local Ret in
+	 {CheckInGrass X Y Ret}
+	 {Browser.browse Ret}
+	 if Ret==true then {Send MoveManager combatgrass(X Y)}
+	 else
+	    skip
+	 end
+      end
+      
    end
 
    proc{CreateRectangle X Y}	%procedure that creates a player rectangle and moves it

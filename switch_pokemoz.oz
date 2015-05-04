@@ -2,6 +2,7 @@
 functor
 import
    ListPokemoz at 'list_pokemoz.ozf'
+   Browser
 export
    InitializeSwitchWindow
    DisplaySwitchWindow
@@ -92,7 +93,7 @@ define
 
 	 IsKo = {CheckIfKO 1} %has to switch if the first pokemoz is KO
 	 if IsKo == false then {DisplayReturnButton} end %display the return button if the trainer don't want to switch pokemoz finally end
-	 
+	 {Browser.browse Finish}
 	 Finish %return 1 if the trainer switched pokemoz and 0 otherwise
       end
    end

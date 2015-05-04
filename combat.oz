@@ -5,6 +5,7 @@ import
    Module
    OS
    ListPokemoz at 'list_pokemoz.ozf'
+   Browser
 export
    CombatVSTrainer
    CombatVSWild
@@ -133,7 +134,6 @@ define
       local X Y in
 	 {Send Player defeated(X)} %check if the Player is defeated
 	 {Send Opponent defeated(Y)}%check if the Opponent is defeated
-	 
 	 if X == true then IsFinished=1 {CleanWindowCombat} true%if the combat is finished, then we make the screen blank
 	 elseif Y == true then IsFinished=0 {CleanWindowCombat} true
 	 else false
@@ -228,12 +228,14 @@ define
 	 {Send Player get(X)}
 	 {UpdateDisplayNamePokemoz true X.p1.t X.p1.n}
 	 {UpdateDisplayHpPokemoz true Player}
-
-	 {IAReactionSwitch} %If you switch pokemoz then the IA reacts
+	 {Browser.browse Switched}
+	 if Switched == 1 then
+	    {IAReactionSwitch} %If you switch pokemoz then the IA reacts
+	 end
 
 	 {AfterAttack}
 
-	 if {IsKo Player} == truen then {ActionSwitch} end %if the attack ko'ed the player pokemoz	 
+	 if {IsKo Player} == true then {ActionSwitch} end %if the attack ko'ed the player pokemoz	 
       end
    end
 
@@ -253,7 +255,7 @@ define
    fun{CaptureSuccess} %return true if the capture succeeded, else false
       local Probability Random X in
 	 {Send Opponent get(X)}
-	 Probability = (X.hp.m - X.hp.r)*5 %probability to capture the pokemoz
+	 Probability = (X.p1.hp.m - X.p1.hp.r)*5 %probability to capture the pokemoz
 	 Random = {OS.rand} mod 100
 
 	 if Random < Probability then true

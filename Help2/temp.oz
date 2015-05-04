@@ -71,6 +71,17 @@ define
 	 end
       end
    end
+   
+   proc {CheckInGrass X Y Ret}
+      for I in 1..NbLines do
+	 for J in 1..NbLines do  %PE inverser I J
+	    if I == (X div TmpL) andthen J == (Y div TmpL) then % PE +1
+	       if Map.J.I==1 then Ret=true else Ret=false end
+	    end
+	 end
+      end
+   end
+   
    %proc{InitRectangles ListTags}
     %  case ListTags of H|T then
    %{Browser.browse H}
@@ -90,7 +101,7 @@ define
 	       {Browser.browse aaaa}
 	       H={Canvas newTag($)}
 	       {Canvas create(rect 10 10 100 100 fill:blue tags:H)}
-	        {Browser.browse bbbb}
+	       {Browser.browse bbbb}
 	       {InitRectangles2 H|LAcc N-1}
 	    end
 	 end
@@ -233,7 +244,7 @@ define
 	 [] listMoves(player:M 1:M1 2:M2 3:M3 4:M4 5:M5 6:M6 7:M7 8:M8 9:M9 10:M10)|S2 then
 	    {MoveTrainers listMoves(player:M 1:M1 2:M2 3:M3 4:M4 5:M5 6:M6 7:M7 8:M8 9:M9 10:M10)}
 	    {Loop S2}
-	    %%%%
+%%%%
 	 end
       end
       P S 
@@ -251,7 +262,7 @@ define
       ListTags={InitRectangles 10}
       {Browser.browse xxxxx}
       {MoveTrainers listMoves(player:0 1:3 2:0 3:0 4:0 5:0 6:0 7:0 8:0 9:0 10:0)}
-       {Browser.browse yyyyy}
+      {Browser.browse yyyyy}
       {Browser.browse ListTags.1}
       {CreateRectangle W-TmpL H-TmpL nil}
    end
