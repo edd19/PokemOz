@@ -40,10 +40,21 @@ define
 	 {GenerateGrid ActL-TmpL}
       end
    end
-   
+
+  proc {GenerateGameMap M} %colored the case if needed (green for grass for example)
+      for I in 1..NbLines do %TODO boucle recusif
+	 for J in 1..NbLines do
+	    if M.J.I==1 then %Grass Cell 
+	       {Canvas create(rect (I-1)*TmpL (J-1)*TmpL (I)*(TmpL) (J)*(TmpL) fill:green)}
+	    end
+	 end
+      end
+   end
+  
    proc{MapScreen}%draw the map on the screen and launch the movement of the trainers
       {Window show}
 
       {GenerateGrid H}
+      {GenerateGameMap Map}
    end
 end
