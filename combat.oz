@@ -312,7 +312,7 @@ define
    proc{ActionCapture}%when clicking on the button capture
       local Success  in
 	 Success = {CaptureSuccess}
-	 if Success == true then {MessageCapture true} {Delay TimeDelay} {AddPokemoz} {Window.cleanWindow} IsFinished=3
+	 if Success == true then {MessageCapture true} {Delay TimeDelay} {AddPokemoz} {CleanWindowCombat} IsFinished=3
 	 else {MessageCapture false}
 	 end
 	 {IAReactionAttack} %If you switch pokemoz then the IA reacts
